@@ -8,3 +8,6 @@ shap
 imbalanced-learn
 pyarrow
 jupyter
+xgboost
+shap
+imbalanced-learn
