@@ -2,7 +2,7 @@
 
 **Project Title**: AI Forensic Triage Tool: Predicting Shooting Incidents in Boston to Prioritize Crime Lab Resources
 
-**Author**: Richard (Solo)  
+**Author**: Ricardo Orellana 
 **Course**: DSE 6311 – Capstone  
 **Instructor**: Katherine Geist, Ph.D.
 
