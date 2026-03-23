@@ -1,4 +1,4 @@
-# M04 - Preprocessing & Feature Engineering Report
+# Data Preprocessing and Feature Engineering Report
 
 **AI Forensic Triage Tool: Predicting Shooting Incidents in Boston**  
 **Capstone Project** — DSE 6311  
@@ -57,9 +57,3 @@ The beeswarm plot shows clear directional effects: higher poverty and nighttime 
 - Tableau dashboard for stakeholder presentation
 
 **All code, models, and SHAP plots are saved in `/models/` and `/visualizations/`.**
-
----
-
-
-
-
