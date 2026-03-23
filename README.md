@@ -1,7 +1,7 @@
 # AI Forensic Triage Tool: Predicting Shooting Incidents in Boston
 
 **Capstone Project — DSE 6311**  
-**Author**: Ricardo Orellana
+**Author**: Ricardo Orellana  
 **This is a living document** — will be updated frequently (M01 requirement)
 
 ## Proposed Working Project Title
