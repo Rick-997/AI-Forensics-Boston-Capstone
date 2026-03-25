@@ -34,7 +34,7 @@ Current evidence-processing workflows treat all incidents uniformly, creating ba
 ## 3. Data Source and Description
 - **Boston Police Crime Incident Reports (2023–present)**: ~150k rows CSV from https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system. Key columns: SHOOTING (binary target), OCCURRED_ON_DATE, DISTRICT, Lat/Long, OFFENSE_CODE_GROUP.  
 - **U.S. Census Bureau American Community Survey (2020–2024)**: Boston neighborhoods/tracts (median income, poverty rate, education, race, housing density) from https://data.census.gov. These will be merged by district to add socioeconomic context.  
-Both datasets are public, free, and require original cleaning — fulfilling capstone requirements.
+Both datasets are public, free, and require original cleaning.
 
 ## 4. Research Question and Hypothesis
 **Research Question**: Can incident features (time of day, location, district, offense proxies) and neighborhood demographics accurately predict whether a reported crime will involve a shooting?  
@@ -62,10 +62,10 @@ District heatmaps, time-of-day line plots, SHAP summary and dependence plots, an
 Nighttime and poverty will emerge as dominant predictors. The model is expected to achieve >0.80 PR-AUC with clear, actionable SHAP explanations for forensic triage.
 
 ## 9. Target Audience/Stakeholder
-Massachusetts State Police Crime Laboratory and Boston Police Department — direct users for real-world case prioritization and resource allocation.
+Massachusetts State Police Crime Laboratory and Boston Police Department, direct users for real-world case prioritization and resource allocation.
 
 ## 10. Conclusion
-This Boston-specific, public-data project delivers a practical AI tool with immediate public-safety value while meeting all capstone requirements.
+This Boston-specific, public-data project delivers a practical AI tool with immediate public-safety value.
 
 ## References
 1. Boston Police Department. (n.d.). Crime Incident Reports (August 2015 to Date). City of Boston Open Data Portal. https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system  
