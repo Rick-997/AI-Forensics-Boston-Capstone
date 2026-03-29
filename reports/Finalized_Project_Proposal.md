@@ -146,8 +146,80 @@ This comprehensive plan ensures the project is not only technically sound but di
 - **GitHub repo**: https://github.com/Rick-997/AI-Forensics-Boston-Capstone
 
 ## Planned Visualization
-District heatmaps, time-of-day line plots, SHAP summary and dependence plots, and a final Tableau dashboard for stakeholder presentation. The Tableau dashboard will include an interactive map of Boston highlighting high-risk districts by shooting probability, overlaid with poverty rates and nighttime incident density.
 
+### 1) Overview of Visualization Strategy
+Visualizations are central to this project because they serve three critical purposes: (1) exploratory data analysis to validate hypotheses, (2) model interpretability for forensic stakeholders who need to trust and explain predictions in court, and (3) actionable decision support through an interactive Tableau dashboard that the Massachusetts State Police Crime Laboratory and Boston Police Department can use immediately. All visualizations are generated in Jupyter Notebooks (02_eda.ipynb and 04_model_evaluation_and_shap.ipynb) and saved as high-resolution PNGs in the `visualizations/` and `models/` folders of the GitHub repository for full reproducibility. The final deliverable is a polished Tableau dashboard that combines static insights with interactive exploration.
+
+### 2) Exploratory Data Analysis Visualizations (Already Implemented)
+These plots were created during the EDA phase and are already saved in the repo:
+
+- **01_shooting_imbalance.png**  
+  A clear bar chart and pie chart showing the severe class imbalance (~0.7 % shooting incidents vs. 99.3 % non-shooting). This plot immediately communicates the modeling challenge and justifies the use of SMOTE oversampling and Precision-Recall AUC as the primary metric.
+
+- **02_shooting_by_hour.png**  
+  A line plot with 24-hour rolling average showing shooting probability peaks between 8 PM and 4 AM. This directly supports the “is_night” hypothesis and gives lab analysts a quick temporal triage rule.
+
+- **03_night_vs_day.png**  
+  Side-by-side bar charts comparing shooting rates during nighttime vs. daytime, highlighting a 2–3× increase at night.
+
+- **04_district_rates.png**  
+  A horizontal bar chart ranking the 12 Boston police districts by shooting rate (B2, B3, and C11 consistently highest). This geographic view helps the crime lab allocate resources by district.
+
+- **05_hour_district_heatmap.png**  
+  A heatmap crossing hour-of-day with district, revealing specific high-risk combinations (e.g., B2 district at 11 PM–2 AM).
+
+- **06_correlation_matrix.png**  
+  A clean correlation heatmap showing relationships between engineered features (poverty_rate, is_night, is_violent, etc.), helping identify multicollinearity before modeling.
+
+All six plots are already pushed to GitHub and can be viewed directly via raw links (e.g., https://raw.githubusercontent.com/Rick-997/AI-Forensics-Boston-Capstone/main/visualizations/02_shooting_by_hour.png).
+
+### 3) Model Interpretability Visualizations (SHAP)
+These are generated automatically in `04_model_evaluation_and_shap.ipynb` and saved in the `models/` folder:
+
+- **shap_summary_bar.png**  
+  Global feature importance bar chart showing the top 15 predictors. We expect “poverty_rate”, “is_night”, and specific districts to dominate.
+
+- **shap_summary_beeswarm.png**  
+  Beeswarm plot displaying the distribution of SHAP values for every feature across all test instances, with color gradients showing feature values (red = high poverty, blue = low). This is the single most important plot for forensic analysts because it shows both direction and magnitude of impact.
+
+- **shap_dependence_poverty_night.png**  
+  Dependence plot with “poverty_rate” on the x-axis, SHAP value on the y-axis, and “is_night” as the interaction color. This reveals the synergistic effect: high poverty + nighttime produces dramatically higher shooting probability.
+
+These SHAP plots are embedded directly in the final report and dashboard so stakeholders can click on any incident and see an individual force plot explaining the prediction.
+
+### 4) Final Stakeholder Dashboard – Tableau (Planned Polish)
+To make the model truly operational, I will build an interactive Tableau dashboard (using the free Tableau Public license I already have). The dashboard will include:
+
+- **Interactive Boston Map (Core View)**  
+  A choropleth map of Boston Police Districts (or Census tracts if we extend to tract-level ACS data) colored by predicted shooting probability. Hover tooltips will display:  
+  - Predicted probability  
+  - Actual shooting rate from training data  
+  - Poverty rate  
+  - Top contributing SHAP features for the district  
+  - Number of incidents in the last 30 days  
+
+  The map will use the Lat/Long coordinates from the crime data and overlay district boundaries. Users (crime lab analysts) can filter by date range, time of day, or district.
+
+- **Time-Series Trend Line**  
+  Daily/weekly shooting probability trend with a reference line for the model’s decision threshold.
+
+- **SHAP Global Summary Panel**  
+  Embedded bar and beeswarm plots that update when filters are applied.
+
+- **Incident-Level Drill-Down**  
+  A table of recent incidents sorted by predicted probability. Clicking a row opens a SHAP force plot explaining why that specific incident received its score.
+
+- **Fairness & Limitations Panel**  
+  Side-by-side bar charts showing model performance stratified by district and poverty quartile, explicitly addressing bias concerns.
+
+The dashboard will be published to Tableau Public with a shareable link and also exported as a static PDF for the final report. Because Tableau connects directly to the processed Parquet file in our repo, the dashboard stays live as new Boston crime data is released.
+
+### 5) How Visualizations Support the Research Question and Stakeholders
+Every visualization was designed with the end user in mind. The EDA plots validate the hypotheses in plain language. The SHAP plots provide courtroom-ready explanations (“the model flagged this incident because it occurred at 11 PM in a high-poverty district”). The Tableau map turns abstract probabilities into a daily triage tool that the crime laboratory can open each morning to prioritize the next 24–48 hours of ballistics and DNA work. This end-to-end visualization pipeline ensures the project is not only technically excellent but practically useful for the Massachusetts State Police Crime Laboratory and Boston Police Department.
+
+All code to regenerate every plot is in the notebooks, and the Tableau workbook (.twbx) will be added to the `visualizations/` folder before final submission.
+
+---
 ## Expected Key Insights
 Nighttime and poverty will emerge as dominant predictors. The model is expected to provide clear, actionable SHAP explanations for forensic triage. We anticipate that districts like B3, B2, and C11 will show the highest risk during nighttime hours, allowing labs to prioritize resources effectively.
 
