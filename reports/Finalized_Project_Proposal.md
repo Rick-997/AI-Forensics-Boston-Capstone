@@ -141,10 +141,54 @@ Success is achieved if:
 - The GitHub repo and notebooks are fully reproducible and well-documented.
 
 This comprehensive plan ensures the project is not only technically sound but directly usable by the Massachusetts State Police Crime Laboratory and Boston Police Department.
+
 ## Technical Details
-- **Language**: Python (Jupyter Notebooks)  
-- **Other resources needed**: None beyond free public datasets and standard libraries (pandas, scikit-learn, XGBoost, SHAP)  
-- **GitHub repo**: https://github.com/Rick-997/AI-Forensics-Boston-Capstone
+
+### 1) Languages
+Python 3.11+ is the primary language used for all data wrangling, exploratory analysis, modeling, and interpretability work. Jupyter Notebooks were chosen for their interactive nature, excellent support for data science workflows, and ease of sharing reproducible code. All notebooks are stored in the `notebooks/` folder of the GitHub repository and run end-to-end from raw data to final SHAP plots and model export.
+
+SQL (via DuckDB or pandas queries) is used selectively for efficient joins when merging the Boston crime data with Census ACS tables. No additional paid software is required.
+
+### 2) Libraries and Packages
+The project relies on a focused, standard data-science stack (full list in `requirements.txt` at the repository root):
+
+- **Data handling & wrangling**: `pandas`, `numpy`, `pathlib`
+- **Date/time engineering**: `datetime`, custom circular encoding functions
+- **Visualization**: `matplotlib`, `seaborn`, `plotly` (for interactive previews)
+- **Modeling**: `scikit-learn`, `xgboost`, `imbalanced-learn` (SMOTE)
+- **Explainability**: `shap` (TreeExplainer for global and local interpretations)
+- **Data merging & geospatial**: `geopandas` (planned for tract-level ACS extension)
+- **Dashboard**: Tableau Desktop/Public (connected directly to the processed Parquet file)
+- **Utilities**: `joblib` (model persistence), `tqdm` (progress bars)
+
+All libraries are installed via `pip install -r requirements.txt` and tested in a clean Anaconda environment to ensure reproducibility.
+
+### 3) Data Visualization Tools
+- **Exploratory & model interpretability plots** are generated programmatically in the notebooks and exported as high-resolution (300 dpi) PNG files.
+- **Final stakeholder dashboard** is built in Tableau Desktop/Public. The dashboard connects live to the processed Parquet file in `data/processed/` and includes an interactive Boston district map, SHAP summary panels, time-series trends, and incident drill-down with force plots. The Tableau workbook (.twbx) will be committed to the `visualizations/` folder.
+
+This combination ensures both code-based reproducibility (for academic review) and polished, non-technical usability (for crime-lab stakeholders).
+
+### 4) Source File Types and Data Management
+- Raw data: CSV (Boston crime incidents downloaded directly from the public portal; Census ACS tables).
+- Processed data: Saved as both Parquet (for speed) and CSV (for GitHub visibility) in `data/processed/`.
+- Models: XGBoost model exported as `xgboost_shooting_model.json` in the `models/` folder.
+- Visualizations: PNG files in `visualizations/` and `models/`; Tableau workbook in `visualizations/`.
+- All file paths use `pathlib` with relative references so the notebooks work identically on any teammate’s machine or in a fresh clone of the repository.
+
+### 5) Version Control and Reproducibility
+The entire project is managed with Git via GitHub Desktop. The repository follows a clean, professional structure:
+- `data/raw/` – untouched original CSV
+- `data/processed/` – cleaned and merged files
+- `notebooks/` – 01_data_wrangling.ipynb through 04_model_evaluation_and_shap.ipynb
+- `models/` – trained model and SHAP plots
+- `visualizations/` – EDA plots and Tableau workbook
+- `reports/` – all proposal and final report Markdown files
+- `requirements.txt` and `.gitkeep` files for easy setup
+
+Every commit includes meaningful messages, and the repository is public so anyone can clone and run the full pipeline with a single `git clone` + `pip install -r requirements.txt`.
+
+No external paid APIs or proprietary tools are used beyond the free Tableau Public license already available to me. This ensures the project remains fully open-source, reproducible, and immediately deployable by the Massachusetts State Police Crime Laboratory.
 
 ## Planned Visualization
 
