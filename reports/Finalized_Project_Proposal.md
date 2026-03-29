@@ -48,29 +48,98 @@ Third, we hypothesize that district-level poverty rate (merged from Census ACS) 
 Based on these hypotheses, we expect the final XGBoost model (with SMOTE oversampling and SHAP explainability) to achieve strong predictive performance on the imbalanced shooting target. We predict that SHAP summary plots will clearly rank “is_night,” “poverty_rate,” and specific districts (e.g., B2, B3, C11) as the most influential features. We also predict that dependence plots will show a clear interaction effect: nighttime incidents in high-poverty areas will receive the highest shooting probabilities. These insights will allow the crime laboratory to operationalize the model outputs immediately, prioritizing forensic resources on the subset of incidents most likely to involve firearms.
 
 ## Data & Methods
-**Data set(s) chosen**  
-- Boston Police Crime Incident Reports (2023–present): ~150k rows from https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system. Key columns: SHOOTING (binary target), OCCURRED_ON_DATE, DISTRICT, Lat/Long, OFFENSE_CODE_GROUP.  
-- U.S. Census ACS 2020–2024: Boston neighborhoods/tracts (median income, poverty rate, education, race, housing density) from https://data.census.gov.  
 
-These datasets are public, free, large enough for robust modeling, and perfectly aligned with the research question. I will merge the ACS data by district and plan to pull additional neighborhood variables (e.g., education attainment, housing density, median household income) to strengthen the socioeconomic signal.
+### 1) Data
 
-**Response / outcome variable**  
-SHOOTING (binary: 1 = shooting involved, 0 = no shooting)
+#### 1.1) Datasource #1 – Boston Police Crime Incident Reports
+Our primary datasource is the Boston Police Department’s official Crime Incident Reports (August 2015–present, with a focus on the most recent full years 2023–present for model training).  
+**Direct link**: https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system  
 
-**Predictor variable(s)**  
-Time features (hour, is_night, is_weekend), DISTRICT (one-hot), violent offense proxy, and district-level poverty_rate (plus additional ACS variables) from Census ACS.
+This dataset is updated daily and contains approximately 150,000–300,000 rows depending on the exact download window. Each row represents a single reported incident with rich temporal, geographic, and categorical information. The data is publicly available in CSV format, making it ideal for reproducible research. Key strengths include its official source (no sampling bias), real-time relevance to Boston’s actual crime environment, and the presence of the binary `SHOOTING` flag that serves as our ground-truth target. Limitations include occasional missing values in location fields and the fact that not every shooting is immediately flagged at the time of reporting; however, the dataset has been cleaned and standardized by the city, and we apply additional validation steps in preprocessing.
 
-**Tentative analysis plan**  
-1. Data cleaning & preprocessing (parse dates, handle missing values, create binary target)  
-2. Feature engineering (circular time encoding, violent proxy, district dummies, census merge, SMOTE for imbalance)  
-3. Exploratory data analysis (shooting rates by district/hour, correlation matrices)  
-4. Hypothesis testing (chi-square and preliminary logistic regression)  
-5. Predictive modeling (XGBoost / Random Forest with SHAP explainability)  
-6. Validation: 80/20 train/test split with stratified sampling, 10-fold cross-validation, and explicit fairness checks by district and poverty level.
+#### 1.2) Datasource #2 – U.S. Census American Community Survey (ACS) 2020–2024
+To enrich the model with neighborhood-level socioeconomic context, we merge district-level and tract-level data from the U.S. Census Bureau’s American Community Survey (ACS) 5-year estimates (2020–2024).  
+**Direct link**: https://data.census.gov (Boston tracts and districts via geographic filters)  
 
-**Pitfalls and mitigations**  
-Severe class imbalance (~0.7% shootings) will be addressed with SMOTE. Using district-level (not tract-level) poverty data is a limitation; I will note this and explore tract-level data in future work. I will also conduct a bias/fairness analysis to ensure the model does not unfairly amplify existing socioeconomic disparities.
+We specifically pull variables related to poverty rate, median household income, educational attainment, housing density, racial/ethnic composition, and unemployment rate. These are aggregated at the Boston Police District level for the main model (to match the granularity of the crime data) and will be explored at the tract level in sensitivity analyses. The ACS data is authoritative, annually updated, and freely available in tabular format. Merging it with the Boston crime data allows the model to capture well-documented environmental and structural factors associated with gun violence, moving beyond purely incident-level features.
 
+#### 1.1.1) Data Dictionaries: Target & Predictor Variables
+
+**Boston Police Crime Incident Reports (primary tabular data)**
+
+| Column                  | Description                                      | Type          | Notes / Preprocessing |
+|-------------------------|--------------------------------------------------|---------------|-----------------------|
+| INCIDENT_NUMBER        | Unique incident identifier                       | String        | - |
+| OFFENSE_CODE           | Numeric offense code                             | Integer       | - |
+| OFFENSE_CODE_GROUP     | Broad offense category (e.g., “Aggravated Assault”) | String     | Used to create `is_violent` proxy |
+| SHOOTING (target)      | Binary indicator (1 = shooting involved)         | Integer (0/1) | Severe imbalance (~0.7 %) |
+| OCCURRED_ON_DATE       | Timestamp of incident                            | Datetime      | Parsed for hour, weekday, is_night |
+| DISTRICT               | Police district (A1, B2, B3, etc.)               | String        | One-hot encoded |
+| Lat / Long             | Geographic coordinates                           | Float         | Used for validation only |
+| Location               | Street address (redacted in some releases)       | String        | - |
+
+**U.S. Census ACS (merged by district/tract)**
+
+| Variable                        | Description                                      | Type    | Notes |
+|---------------------------------|--------------------------------------------------|---------|-------|
+| poverty_rate                   | % of population below poverty line               | Float   | Primary socioeconomic predictor |
+| median_household_income        | Median household income (USD)                    | Float   | - |
+| education_bachelors_or_higher  | % with bachelor’s degree or higher               | Float   | - |
+| housing_density                | Housing units per square mile                    | Float   | Proxy for urban density |
+| unemployment_rate              | % unemployed                                     | Float   | - |
+| racial_composition             | % Black, % Hispanic, % White, etc.               | Float   | Included for fairness checks only |
+
+These dictionaries cover every variable used in the final model. Additional derived features (hour_sin, hour_cos, is_night, is_weekend, is_violent) are created during preprocessing and fully documented in the code.
+
+### 2) Methods
+
+#### 2.1) Data Preprocessing
+All preprocessing is performed in `notebooks/01_data_wrangling.ipynb` using Python and pandas. Steps include:
+- Loading the raw CSV from the public Boston data portal (no local hard-coding).
+- Parsing `OCCURRED_ON_DATE` into datetime components and engineering circular time features (`hour_sin`, `hour_cos`) to capture daily periodicity.
+- Creating binary flags: `is_night` (8 pm–6 am), `is_weekend`, and `is_violent` (via string matching on `OFFENSE_CODE_GROUP` with `.fillna("")` to handle any missing values).
+- One-hot encoding `DISTRICT`.
+- Merging ACS variables by district using a lookup dictionary (extendable to tract-level with geopandas in future iterations).
+- Handling missing values (median imputation for numeric ACS variables, mode for categorical).
+- Saving both a Parquet file for speed and a CSV for GitHub visibility in `data/processed/`.
+- Addressing class imbalance with SMOTE oversampling inside the modeling notebook only (never on the test set).
+
+#### Analysis Plan
+
+##### 1) Models
+We evaluate a progression of models of increasing complexity:
+- Baseline: Logistic Regression (interpretable linear benchmark).
+- Main model: XGBoost Classifier (`n_estimators=200`, `learning_rate=0.1`, `max_depth=6`, `eval_metric='aucpr'`).
+- Alternative: Random Forest (for comparison of tree-based methods).
+- Hyperparameter tuning via grid search with 10-fold cross-validation.
+- All models trained after SMOTE to balance the shooting class.
+
+##### 2) Evaluation
+Performance is assessed on the imbalanced test set using:
+- Precision-Recall AUC (primary metric given rarity of shootings).
+- F1-score, precision, recall, and confusion matrices.
+- 80/20 stratified train/test split + 10-fold cross-validation.
+- Cross-dataset validation by training on 2023 data and testing on 2024–2025 hold-out periods.
+- Fairness checks: stratified metrics by district and poverty quartile.
+
+##### 3) Interpretability
+SHAP (TreeExplainer) is used throughout:
+- Summary bar and beeswarm plots to rank global feature importance.
+- Dependence plots (e.g., `poverty_rate` interacted with `is_night`) to reveal interactions.
+- Force plots for individual incident explanations that could be shown to lab analysts.
+
+##### 4) Misclassification Analysis
+We will examine false positives and false negatives by district, time of day, and poverty level to understand model limitations and identify edge cases that still require human expert review.
+
+##### 5) What defines success (how do we know we answered the question)
+Success is achieved if:
+- PR-AUC exceeds 0.80 on the test set.
+- SHAP plots consistently highlight expected features (nighttime, poverty, specific districts).
+- The model generalizes across time periods and districts.
+- Stakeholders (crime lab) receive a Tableau dashboard that turns predictions into actionable triage priorities.
+- The GitHub repo and notebooks are fully reproducible and well-documented.
+
+This comprehensive plan ensures the project is not only technically sound but directly usable by the Massachusetts State Police Crime Laboratory and Boston Police Department.
 ## Technical Details
 - **Language**: Python (Jupyter Notebooks)  
 - **Other resources needed**: None beyond free public datasets and standard libraries (pandas, scikit-learn, XGBoost, SHAP)  
