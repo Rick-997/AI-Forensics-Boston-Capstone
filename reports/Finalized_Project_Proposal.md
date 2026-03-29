@@ -18,7 +18,7 @@ The question asks whether readily available public data can forecast shooting in
 Forensic crime laboratories and the Boston Police Department process thousands of incidents annually under tight resource constraints. Ballistics analysis, DNA testing, and firearms-related evidence are extremely time-intensive. However, not every reported crime involves a shooting. Current workflows treat all incidents uniformly, creating backlogs and delaying justice in shooting-related cases. This tool fills the niche of real-time forensic triage so high-impact cases can be prioritized.
 
 **Why is it worth your time/effort to explore this question?**  
-It directly supports the Massachusetts State Police Crime Laboratory and Boston Police Department by enabling faster evidence processing for shooting cases. The project uses only free public data, meets every capstone requirement, and delivers immediate stakeholder value.
+It directly supports the Massachusetts State Police Crime Laboratory and Boston Police Department by enabling faster evidence processing for shooting cases. The project uses only free public data, meets every capstone requirement, and delivers immediate stakeholder value. With over 300,000 incidents in the Boston dataset since 2015, manual triage is inefficient. A predictive model can reduce backlogs and improve public safety outcomes.
 
 **Is your question novel / original?**  
 It is not entirely novel (predictive policing exists), but applying it specifically to forensic lab triage with SHAP explainability for a real-world stakeholder in Boston is original and actionable.
@@ -35,7 +35,7 @@ Prediction: The XGBoost model with SHAP explainability will demonstrate strong p
 - Boston Police Crime Incident Reports (2023–present): ~150k rows from https://data.boston.gov/dataset/crime-incident-reports-august-2015-to-date-source-new-system. Key columns: SHOOTING (binary target), OCCURRED_ON_DATE, DISTRICT, Lat/Long, OFFENSE_CODE_GROUP.  
 - U.S. Census ACS 2020–2024: Boston neighborhoods/tracts (median income, poverty rate, education, race, housing density) from https://data.census.gov.  
 
-These datasets are public, free, large enough for robust modeling, and perfectly aligned with the research question (incident-level features + neighborhood context). I will merge the ACS data by district and plan to pull additional neighborhood variables (e.g., education attainment, housing density) to strengthen the socioeconomic signal.
+These datasets are public, free, large enough for robust modeling, and perfectly aligned with the research question. I will merge the ACS data by district and plan to pull additional neighborhood variables (e.g., education attainment, housing density, median household income) to strengthen the socioeconomic signal.
 
 **Response / outcome variable**  
 SHOOTING (binary: 1 = shooting involved, 0 = no shooting)
@@ -60,13 +60,13 @@ Severe class imbalance (~0.7% shootings) will be addressed with SMOTE. Using dis
 - **GitHub repo**: https://github.com/Rick-997/AI-Forensics-Boston-Capstone
 
 ## Planned Visualization
-District heatmaps, time-of-day line plots, SHAP summary and dependence plots, and a final Tableau dashboard for stakeholder presentation.
+District heatmaps, time-of-day line plots, SHAP summary and dependence plots, and a final Tableau dashboard for stakeholder presentation. The Tableau dashboard will include an interactive map of Boston highlighting high-risk districts by shooting probability, overlaid with poverty rates and nighttime incident density.
 
 ## Expected Key Insights
-Nighttime and poverty will emerge as dominant predictors. The model is expected to provide clear, actionable SHAP explanations for forensic triage.
+Nighttime and poverty will emerge as dominant predictors. The model is expected to provide clear, actionable SHAP explanations for forensic triage. We anticipate that districts like B3, B2, and C11 will show the highest risk during nighttime hours, allowing labs to prioritize resources effectively.
 
 ## Conclusion
-This Boston-specific, public-data project delivers a practical AI tool with immediate public-safety value.
+This Boston-specific, public-data project delivers a practical AI tool with immediate public-safety value. Future work can expand to tract-level Census data and real-time deployment.
 
 ## References
 1. Boston Police Department. Crime Incident Reports. https://data.boston.gov  
