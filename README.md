@@ -2,9 +2,13 @@
 
 **Capstone Project — DSE 6311**  
 **Author**: Ricardo Orellana  
-**This is a living document** — will be updated frequently (M01 requirement)
 
-## Proposed Working Project Title
+## Interactive Dashboard
+**[🔗 View Live Tableau Dashboard](https://public.tableau.com/app/profile/ricardo.orellana8607/viz/AIForensicTriageTool-BostonShootingRiskPredictor/AIForensicTriageToolBostonShootingRiskMap)**
+
+---
+
+## Project Title
 AI Forensic Triage Tool: Predicting Shooting Incidents in Boston to Prioritize Crime Lab Resources
 
 ## Brief Background
@@ -17,8 +21,6 @@ Can incident features (time of day, location, district, offense type proxies) an
 Nighttime incidents in higher-poverty districts will show significantly higher probability of involving a shooting (expected ≥35% increase compared to daytime or lower-poverty areas).  
 We predict the XGBoost model with SHAP explainability will achieve high Precision-Recall AUC and be ready for real-world use by the Massachusetts State Police Crime Laboratory and Boston Police Department.
 
----
-
 ## Overview
 Forensic crime labs face heavy caseloads. This project uses public Boston crime data and neighborhood demographics to predict whether a reported incident involves a shooting, enabling smarter triage and faster justice.
 
@@ -29,31 +31,32 @@ Forensic crime labs face heavy caseloads. This project uses public Boston crime 
 - Deliver actionable insights for Massachusetts State Police Crime Laboratory and Boston Police Department
 
 ## Data Sources
-- Boston Police Crime Incident Reports (2023–present): ~150k rows from https://data.boston.gov (SHOOTING = target)
-- U.S. Census ACS 2020-2024: Boston neighborhoods (poverty, income, education, race, housing density)
+- Boston Police Crime Incident Reports (2023–present): ~239k rows from [data.boston.gov](https://data.boston.gov) (SHOOTING = target)
+- U.S. Census ACS 2020–2024: Boston neighborhoods (poverty, income, education, race, housing density)
 
 ## Methodology
-- Data cleaning and feature engineering (time circular encoding, violent proxy, census merge)
-- XGBoost / Random Forest classifier with SMOTE
+- Data cleaning and feature engineering (circular time encoding, violent offense proxy, census merge)
+- XGBoost classifier with SMOTE for class imbalance
 - Evaluation: Precision-Recall AUC, F1-score
 - Interpretability: SHAP values
+- Interactive visualization: Tableau dashboard
 
 ## Repository Organization
-- data/raw/ — original downloads
-- data/processed/ — cleaned files
-- notebooks/ — numbered analysis scripts
-- reports/ — all deliverables
-- src/ — reusable Python code
-- models/ — saved models
-- visualizations/ — plots and Tableau exports
+- `data/raw/` — original downloads
+- `data/processed/` — cleaned files
+- `notebooks/` — numbered analysis scripts (01–05)
+- `reports/` — all deliverables
+- `models/` — saved XGBoost model
+- `visualizations/` — plots and Tableau workbook
+- `visualizations/tableau/` — packaged `.twbx` dashboard file
 
 ## How to Run
 1. `pip install -r requirements.txt`
-2. Run notebooks in order: `01_data_wrangling.ipynb` → `02_eda.ipynb` → ...
-3. All outputs saved automatically to `data/processed/`
+2. Run notebooks in order: `01_data_wrangling.ipynb` → `02_eda.ipynb` → `03_feature_engineering_and_modeling.ipynb` → `04_model_evaluation_and_shap.ipynb` → `05_tableau_data_prep.ipynb`
+3. Open `AI_Forensic_Triage_Tool_Boston_Shooting_Risk_Predictor.twbx` in Tableau Desktop/Public for the interactive dashboard
 
 ## Team & Status
-- Solo (Ricardo) — open to teammates if anyone joins
-- Currently in Week 1: data acquisition & cleaning complete
+- Solo project (Ricardo Orellana)
+- **Complete**: Data wrangling, EDA, modeling, SHAP explainability, and interactive Tableau dashboard published
 
-Last updated: March 2026
+**Last updated**: April 2026
