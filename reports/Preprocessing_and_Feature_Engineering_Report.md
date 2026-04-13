@@ -115,19 +115,31 @@ All results, including the engineered dataset, SHAP plots, and performance metri
 
 ## Discussion & Next Steps
 
-The preprocessing and feature engineering phase successfully transformed raw, messy police incident data into a clean, model-ready dataset that respects both statistical best practices and stakeholder needs. Every decision — from circular time encoding to the inclusion of neighborhood poverty — was made with the goal of producing actionable, explainable predictions for the crime laboratory.
+The preprocessing and feature engineering phase has successfully transformed a large, raw, and imperfect police incident dataset into a clean, well-structured, and highly informative feature matrix ready for modeling. This work represents far more than simple data cleaning — it was a deliberate process of translating real-world forensic and policing challenges into features that a model can learn from while remaining understandable to the stakeholders who will ultimately use the tool.
 
-Key lessons learned:
-- Domain knowledge (nighttime risk, socioeconomic factors) guided feature creation more effectively than pure automation.
-- Maintaining interpretability was more valuable than aggressive dimensionality reduction.
+One of the strongest outcomes of this phase is how well the engineered features align with both the research question and the original hypothesis. The creation of `is_night`, circular time encoding, the violent offense proxy, and especially the district-level poverty rate from Census data gave the model meaningful signals that reflect known patterns of violence in Boston. The exploratory analysis in Notebook 02 confirmed that nighttime incidents are roughly five times more likely to involve a shooting than daytime incidents, and that certain districts (particularly B2, B3, and C11) consistently show elevated risk. These findings directly support our hypothesis that nighttime incidents in higher-poverty neighborhoods carry significantly higher shooting probability.
 
-**Next Steps (Modeling Plan)**:
-1. Train and tune the XGBoost model.
-2. Generate full SHAP explanations and dependence plots.
-3. Build the final interactive Tableau dashboard for stakeholders.
-4. Validate the model on a held-out test set and prepare a formal report for the Massachusetts State Police Crime Laboratory.
+The decision to prioritize interpretability over aggressive dimensionality reduction (such as using PCA on the district variables) was one of the most important choices made during this phase. While PCA could have reduced the number of features slightly, it would have come at the cost of stakeholder trust. Forensic laboratories and police leadership need to understand *why* the model flags a particular incident as high-risk. By keeping features like individual districts, night-time indicator, and poverty rate intact, we ensure that every prediction can be explained in plain language. This focus on explainability will be critical when the tool is presented to the Massachusetts State Police Crime Laboratory.
 
-We believe the current dataset and feature set provide a strong foundation for a high-performing, trustworthy predictive tool.
+The use of SMOTE to address the severe class imbalance was also handled thoughtfully. Applying it only to the training set preserved the realistic distribution in the test data, allowing for honest evaluation of model performance. The resulting Precision-Recall AUC of 0.8327 on the baseline model is encouraging and suggests the engineered features are carrying strong predictive signal.
+
+### Lessons Learned
+This phase highlighted several important lessons. First, domain knowledge remains irreplaceable — features like `is_night` and the poverty rate were far more effective than purely statistical transformations because they reflect real operational realities faced by the crime lab. Second, the time invested in thorough EDA (correlation heatmaps, shooting rate by hour and district, etc.) paid off by guiding smarter feature decisions and preventing us from including redundant or noisy variables. Finally, maintaining a reproducible workflow (clear notebook structure, consistent file paths, and detailed comments) made the entire process much smoother and will make future updates or collaboration significantly easier.
+
+### Limitations
+While the current preprocessing is solid, a few limitations remain. The poverty rate is currently calculated at the district level rather than the more granular census tract level due to time constraints and geocoding complexity. In the future, incorporating tract-level socioeconomic data could add even more precision. Additionally, the violent offense proxy relies on keyword matching in the offense code group description; a more sophisticated natural language approach could potentially capture nuances better.
+
+### Next Steps – Modeling Plan
+With the dataset now fully prepared, the project is ready to move into the core supervised modeling phase. The immediate next steps include:
+
+1. **Model Training and Tuning** — Train the final XGBoost classifier with systematic hyperparameter tuning and cross-validation to ensure robust performance.
+2. **Full SHAP Explainability** — Generate comprehensive SHAP dependence plots and force plots to provide detailed, instance-level explanations for stakeholders.
+3. **Model Evaluation** — Conduct a thorough evaluation using Precision-Recall AUC, F1-score, and confusion matrices on the untouched test set.
+4. **Interactive Dashboard** — Integrate the final model predictions and SHAP values into the existing Tableau dashboard so users can explore risk scores and explanations interactively.
+5. **Stakeholder Validation** — Prepare a formal presentation and report for the Massachusetts State Police Crime Laboratory and Boston Police Department to gather feedback on usability and interpretability.
+6. **Deployment Considerations** — Explore options for a lightweight deployment (e.g., a simple API or scheduled batch scoring) so the tool can eventually run on new incoming incidents in near real-time.
+
+Overall, the preprocessing and feature engineering work has laid a strong, transparent, and stakeholder-aligned foundation. The model built on this dataset has a high likelihood of delivering practical value to forensic operations in Boston. The next phase will focus on refining the model and delivering an interactive tool that the crime lab can confidently use to prioritize cases and accelerate justice.
 
 ---
 
