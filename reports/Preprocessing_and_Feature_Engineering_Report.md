@@ -110,6 +110,7 @@ SHAP analysis on the trained model provided clear interpretability:
 These results strongly support the original hypothesis: nighttime incidents in higher-poverty districts do indeed carry significantly higher shooting risk. The model is now ready for the next phase of hyperparameter tuning, cross-validation, and full stakeholder-facing explainability work.
 
 All results, including the engineered dataset, SHAP plots, and performance metrics, are saved in the GitHub repository under the `models/` and `visualizations/` folders for full transparency and reproducibility.
+
 ---
 
 ## Discussion & Next Steps
