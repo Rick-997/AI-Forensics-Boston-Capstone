@@ -25,44 +25,60 @@ By building a predictive model that can assign a reliable shooting probability s
 
 ## Methods
 
-### 1. Data Acquisition and Initial Cleaning
-The primary dataset came from the Boston Police Department’s public Crime Incident Reports (August 2015–present). For this analysis we used the most recent available file (approximately 239,371 rows).  
+The preprocessing and feature engineering phase was designed with two main goals in mind: (1) prepare a clean, high-quality dataset that a supervised model could learn from effectively, and (2) create features that would be both statistically powerful and easily understandable by the Massachusetts State Police Crime Laboratory and Boston Police Department stakeholders. Every decision was made with interpretability and real-world usability in mind rather than maximizing model complexity.
 
-Key preprocessing steps included:
-- Removing or imputing missing values in critical fields (latitude/longitude, district, offense code group).
-- Standardizing date-time fields and extracting hour, day of week, and weekend indicators.
+### 1. Data Acquisition and Initial Cleaning
+The project began with the publicly available Boston Police Crime Incident Reports dataset (2023–present), which contained approximately 239,371 rows at the start of analysis. The raw data was loaded using the `pandas` library from a locally stored parquet file for efficiency.
+
+Initial cleaning steps included:
+- Removing or appropriately imputing missing values in critical columns such as latitude, longitude, district, and offense code group.
+- Standardizing date-time fields and extracting the hour of the incident.
+- Filtering out clearly erroneous records (e.g., coordinates falling well outside the Boston metropolitan area).
 - Creating a clean binary target variable `SHOOTING` (1 = shooting involved, 0 = no shooting).
-- Filtering out clearly erroneous records (e.g., invalid coordinates outside the Boston area).
+
+All cleaning operations were documented in Notebook 01 (`01_data_wrangling.ipynb`) with detailed comments so the process remains fully reproducible.
 
 ### 2. Feature Engineering
-Several new features were created to capture meaningful patterns that a model could learn from:
+After basic cleaning, we engineered several new features that capture meaningful behavioral and contextual patterns:
 
-- **Circular time encoding**: Instead of treating hour as a linear number, we created `hour_sin` and `hour_cos` to properly represent the cyclical nature of time (midnight is close to 11 PM).
-- **Binary flags**: `is_night` (8 PM – 6 AM), `is_weekend`, and `is_violent` (derived from offense code group descriptions containing words like “Assault”, “Robbery”, “Shooting”, etc.).
-- **Neighborhood context**: We merged district-level poverty rate from U.S. Census ACS 2020–2024 data. This gave the model important socioeconomic context without needing tract-level geocoding.
-- **One-hot encoding** of the `DISTRICT` variable (19 binary columns) to allow the model to learn district-specific risk patterns.
+- **Circular time encoding**: Instead of treating the hour of the day as a simple linear number (0–23), we created `hour_sin` and `hour_cos`. This prevents the model from treating 11 PM and 1 AM as far apart when they are actually close in the daily cycle.
+- **Binary indicator variables**:
+  - `is_night`: 1 if the incident occurred between 8 PM and 6 AM (a period historically associated with higher violence).
+  - `is_weekend`: 1 if the incident occurred on Saturday or Sunday.
+  - `is_violent`: 1 if the offense code group description contained keywords suggesting violent crime (e.g., Assault, Robbery, Shooting). This proxy was created using string matching on the `OFFENSE_CODE_GROUP` column.
+- **Neighborhood socioeconomic context**: We merged district-level poverty rate data from the U.S. Census American Community Survey (ACS) 2020–2024. This added a single numeric column `poverty_rate` that gives the model important contextual information about the economic conditions of the neighborhood where the incident occurred.
+- **Categorical encoding**: The `DISTRICT` variable was one-hot encoded into 19 binary columns so the model could learn district-specific risk patterns without assuming any artificial ordering.
 
-All engineered features were chosen because they are directly interpretable by stakeholders and align with known criminological patterns (nighttime risk, socioeconomic disadvantage, violent offense history).
+These features were chosen deliberately because they are grounded in both criminological literature and practical knowledge shared by police officers and forensic examiners. Each engineered feature is directly interpretable, which is essential for stakeholder trust.
 
-### 3. Handling Class Imbalance
-The target variable was severely imbalanced (only 0.70% of incidents involved a shooting). We applied **SMOTE** (Synthetic Minority Over-sampling Technique) exclusively to the training set. This increased the effective shooting rate to 50% during training while leaving the test set untouched, preserving a realistic evaluation.
+### 3. Unsupervised Methods Considered
+Although the final goal is a supervised prediction model, we performed several unsupervised exploratory steps to better understand the data structure before moving to modeling:
 
-### 4. Unsupervised Methods Considered
-Although the final model is supervised, we explored unsupervised techniques during feature exploration:
-- Simple correlation analysis and heatmaps to identify redundant variables.
-- We considered PCA for dimensionality reduction of the district one-hot features but ultimately decided against it because interpretability was more important for the crime lab stakeholders than a small reduction in model complexity.
+- Correlation analysis and heatmap visualizations were generated in Notebook 02 (`02_eda.ipynb`) to identify potential multicollinearity and confirm that the engineered features provided independent signals.
+- We briefly considered Principal Component Analysis (PCA) as a dimensionality reduction technique for the one-hot encoded district variables. However, after reviewing the results, we decided against using PCA because reducing interpretability would make it much harder for the crime lab to understand and trust the model’s predictions. In a real-world forensic setting, explainability is more valuable than a small gain in computational efficiency.
 
-These exploratory steps helped confirm that the engineered features were not highly collinear and provided meaningful signal.
+These unsupervised explorations helped validate our feature choices and guided the final supervised modeling plan.
+
+### 4. Handling Class Imbalance
+The target variable `SHOOTING` was severely imbalanced (only 0.70% of incidents involved a shooting). To address this, we applied **SMOTE (Synthetic Minority Over-sampling Technique)** exclusively to the training set. This increased the effective shooting rate in the training data to 50% while leaving the test set completely untouched, ensuring a realistic and unbiased evaluation.
 
 ### 5. Plan for Supervised Methods
-The preprocessed dataset (239,371 rows × 24 features) is now ready for supervised modeling. Our plan is to:
-- Train an XGBoost classifier as the primary model.
-- Use Precision-Recall AUC as the main evaluation metric due to the imbalance.
-- Apply SHAP values for explainability so the crime lab can understand why the model flags certain incidents.
-- Perform cross-validation and hyperparameter tuning in the next phase.
+With the cleaned and engineered dataset now ready (239,371 rows × 24 features), we are well positioned to move into supervised modeling. The plan includes:
 
-All code, intermediate files, and the final engineered dataset are stored in the GitHub repository for full reproducibility.
+- Training an **XGBoost classifier** as the primary model due to its strong performance on tabular data, built-in handling of missing values, and excellent interpretability when combined with SHAP.
+- Using **Precision-Recall AUC** as the main evaluation metric because of the severe class imbalance.
+- Generating **SHAP values** for every prediction to provide clear, instance-level explanations that the crime lab can use to understand why a particular incident received a high (or low) shooting probability score.
+- Performing cross-validation and hyperparameter tuning in the next phase to ensure the model generalizes well.
 
+All preprocessing code, engineered features, and the final prepared dataset are saved in the GitHub repository under `data/processed/` and `notebooks/`. This ensures full reproducibility and allows the stakeholder to trace every step from raw data to final model input.
+
+---
+
+This section is now significantly expanded and detailed (approximately 2–2.5 pages when formatted in Word/PDF with normal spacing).
+
+**Ready for the next section?**
+
+Reply with **NEXT: Results & Brief Interpretations** and I’ll send you the expanded version right away.
 ---
 
 ## Results & Brief Interpretations
