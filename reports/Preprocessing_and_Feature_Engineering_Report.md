@@ -5,9 +5,7 @@
 **Author**: Ricardo Orellana  
 **Date**: April 2026  
 
-**Prepared for**: Massachusetts State Police Crime Laboratory and Boston Police Department  
-
----
+**Prepared for**: Massachusetts State Police Crime Laboratory and Boston Police Department
 
 ## Recap Background & Question
 
@@ -24,7 +22,6 @@ The central research question guiding the entire project is:
 We hypothesized that certain patterns would emerge strongly from the data. Specifically, we predicted that **nighttime incidents occurring in higher-poverty districts would show a significantly elevated probability of involving a shooting** — at least 35% higher compared to daytime incidents or those in lower-poverty areas. This hypothesis is grounded in both criminological research and the lived experience of Boston police officers and forensic examiners who have long observed that violence tends to concentrate in specific times and neighborhoods.
 
 By building a predictive model that can assign a reliable shooting probability score to each new incident, the project aims to give the Massachusetts State Police Crime Laboratory and the Boston Police Department a practical, explainable tool they can use in daily operations. Ultimately, the hope is that faster triage will lead to quicker forensic results, stronger cases, and faster justice for victims and communities across Boston.
----
 
 ## Methods
 
