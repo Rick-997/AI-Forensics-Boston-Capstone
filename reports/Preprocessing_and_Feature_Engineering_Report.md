@@ -145,23 +145,47 @@ Overall, the preprocessing and feature engineering work has laid a strong, trans
 
 ## Appendix: Data Dictionary (Selected Key Features)
 
-| Feature                | Type     | Description |
-|------------------------|----------|-----------|
-| `hour_sin` / `hour_cos`| Numeric  | Circular encoding of incident hour |
-| `is_night`             | Binary   | 1 if incident occurred 8 PM–6 AM |
-| `is_weekend`           | Binary   | 1 if incident on Saturday or Sunday |
-| `is_violent`           | Binary   | 1 if offense group suggests violent crime |
-| `poverty_rate`         | Numeric  | District-level poverty rate from ACS |
-| `DISTRICT_*`           | Binary   | One-hot encoded police districts |
-| `SHOOTING`             | Binary   | Target variable (1 = shooting involved) |
+The following table summarizes the most important variables used in the final model. All features were created or transformed during the preprocessing and feature engineering phase to maximize both predictive power and interpretability for forensic stakeholders.
 
-Full codebook and all intermediate files are available in the GitHub repository.
+| Feature                  | Type      | Description                                                                 | Rationale / Stakeholder Value |
+|--------------------------|-----------|-----------------------------------------------------------------------------|-------------------------------|
+| `hour_sin` / `hour_cos` | Numeric   | Circular encoding of the hour of the incident (0–23)                      | Captures the cyclical nature of time so midnight is correctly recognized as close to 11 PM |
+| `is_night`               | Binary    | 1 if incident occurred between 8 PM and 6 AM                               | Strong predictor of elevated shooting risk; directly actionable for patrol and lab prioritization |
+| `is_weekend`             | Binary    | 1 if incident occurred on Saturday or Sunday                               | Weekend patterns differ from weekdays and help refine risk scoring |
+| `is_violent`             | Binary    | 1 if offense code group suggests a violent crime (e.g., Assault, Robbery) | Proxy for offense severity; helps the lab understand why an incident received a high probability score |
+| `poverty_rate`           | Numeric   | District-level poverty rate from U.S. Census ACS 2020–2024                | Strongest SHAP feature; provides critical neighborhood context without needing tract-level geocoding |
+| `DISTRICT_*` (19 columns) | Binary | One-hot encoded police districts (A15, A7, B2, etc.)                      | Allows the model to learn district-specific risk patterns that are well-known to Boston officers |
+| `SHOOTING`               | Binary    | Target variable: 1 = shooting involved, 0 = no shooting                   | Binary classification target; only 0.70% positive cases in raw data |
+| `INCIDENT_NUMBER`        | String    | Unique identifier for each incident                                        | Retained for traceability and linking back to original records |
+| `Lat` / `Long`           | Numeric   | Geographic coordinates of the incident                                     | Used for mapping in the Tableau dashboard |
+
+**Additional engineered variables** (not shown in table for brevity) include `hour`, `YEAR`, `MONTH`, and the original raw fields that were retained for reference.
+
+### Full Data Dictionary Location
+A complete codebook with every column, original source, transformation steps, and summary statistics is available in the GitHub repository:
+- `reports/Data_Dictionary_Full.md`
+- `data/processed/tableau_ready.csv` (final version used for the interactive dashboard)
+
+All preprocessing code, feature engineering steps, and the final prepared dataset can be found in:
+- `notebooks/01_data_wrangling.ipynb`
+- `notebooks/03_feature_engineering_and_modeling.ipynb`
+
+This data dictionary ensures that any stakeholder (or future team member) can fully understand every variable used in the model and the rationale behind each engineering choice.
 
 ---
+
+**End of Report**
+
+This Pre-processing & Feature Engineering Report documents the complete journey from raw Boston Police data to a clean, model-ready dataset. All code, intermediate files, models, SHAP plots, and the interactive Tableau dashboard are available in the public GitHub repository:
 
 **GitHub Repository**: https://github.com/Rick-997/AI-Forensics-Boston-Capstone  
 
 **Live Tableau Dashboard**:  
 [AI Forensic Triage Tool – Boston Shooting Risk Predictor](https://public.tableau.com/app/profile/ricardo.orellana8607/viz/AIForensicTriageTool-BostonShootingRiskPredictor/AIForensicTriageToolBostonShootingRiskMap)
 
-This report is submitted in fulfillment of M04 requirements and serves as the foundation for the final modeling and stakeholder presentation phases.
+The next phase will focus on final model tuning, comprehensive SHAP explainability, and delivering a production-ready tool for the Massachusetts State Police Crime Laboratory and Boston Police Department.
+
+Thank you for your time and consideration.
+
+---
+
