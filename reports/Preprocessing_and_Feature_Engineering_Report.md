@@ -74,13 +74,6 @@ All preprocessing code, engineered features, and the final prepared dataset are 
 
 ---
 
-This section is now significantly expanded and detailed (approximately 2–2.5 pages when formatted in Word/PDF with normal spacing).
-
-**Ready for the next section?**
-
-Reply with **NEXT: Results & Brief Interpretations** and I’ll send you the expanded version right away.
----
-
 ## Results & Brief Interpretations
 
 After preprocessing and feature engineering, the dataset was significantly more informative:
