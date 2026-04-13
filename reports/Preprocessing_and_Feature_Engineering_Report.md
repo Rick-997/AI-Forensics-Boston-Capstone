@@ -81,7 +81,7 @@ After completing the full preprocessing and feature engineering pipeline, the da
 ### Key Outcomes from Preprocessing
 - Missing values in critical columns (latitude/longitude, district, offense code group) were handled appropriately without introducing bias.
 - All date-time fields were standardized, allowing reliable extraction of temporal patterns.
-- The binary target variable `SHOOTING` was created cleanly, confirming the severe class imbalance: only **0.70%** of incidents involved a shooting.
+- The binary target variable `SHOOTING` was created cleanly, confirming the severe class imbalance: only 0.70% of incidents involved a shooting.
 
 ### Feature Engineering Results
 The engineered features provided rich, interpretable signals:
@@ -100,11 +100,11 @@ Unsupervised exploration in Notebook 02 revealed several important patterns:
 - The correlation heatmap confirmed that the engineered features were not highly collinear, supporting their independent value.
 
 ### Supervised Modeling Readiness
-The final feature matrix was saved as both a parquet file and a CSV for easy use in modeling. An initial XGBoost baseline model trained on this data achieved a **Precision-Recall AUC of 0.8327**, which is a strong result given the extreme class imbalance.
+The final feature matrix was saved as both a parquet file and a CSV for easy use in modeling. An initial XGBoost baseline model trained on this data achieved a Precision-Recall AUC of 0.8327, which is a strong result given the extreme class imbalance.
 
 SHAP analysis on the trained model provided clear interpretability:
-- **Poverty Rate** emerged as the single most influential feature.
-- **Hour of Day** and **Is Night** were the next strongest predictors, confirming the strong temporal component of risk.
+- Poverty Rate emerged as the single most influential feature.
+- Hour of Day and Is Night were the next strongest predictors, confirming the strong temporal component of risk.
 - Specific districts (especially B2 and A7) also contributed meaningfully.
 
 These results strongly support the original hypothesis: nighttime incidents in higher-poverty districts do indeed carry significantly higher shooting risk. The model is now ready for the next phase of hyperparameter tuning, cross-validation, and full stakeholder-facing explainability work.
