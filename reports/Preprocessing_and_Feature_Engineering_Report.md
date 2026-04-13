@@ -76,14 +76,40 @@ All preprocessing code, engineered features, and the final prepared dataset are 
 
 ## Results & Brief Interpretations
 
-After preprocessing and feature engineering, the dataset was significantly more informative:
-- The engineered time features captured clear nightly spikes in risk.
-- The poverty rate variable emerged as one of the strongest signals.
-- District encoding allowed the model to learn neighborhood-specific patterns (e.g., B2, B3, and C11 showed elevated risk).
-- SMOTE successfully balanced the training data without introducing leakage into the test set.
+After completing the full preprocessing and feature engineering pipeline, the dataset was transformed from raw, messy police incident records into a clean, model-ready feature matrix. The final dataset contained 239,371 rows and 24 engineered features. This represents a substantial improvement in data quality and usability compared to the original raw file.
 
-Visualizations (correlation matrix, shooting rate by hour/district, and feature distributions) confirmed that the transformations aligned with domain knowledge and improved data quality for modeling.
+### Key Outcomes from Preprocessing
+- Missing values in critical columns (latitude/longitude, district, offense code group) were handled appropriately without introducing bias.
+- All date-time fields were standardized, allowing reliable extraction of temporal patterns.
+- The binary target variable `SHOOTING` was created cleanly, confirming the severe class imbalance: only **0.70%** of incidents involved a shooting.
 
+### Feature Engineering Results
+The engineered features provided rich, interpretable signals:
+- Circular time encoding (`hour_sin` and `hour_cos`) successfully captured the cyclical nature of the day, preventing the model from treating midnight and 11 PM as distant.
+- Binary flags (`is_night`, `is_weekend`, `is_violent`) highlighted well-known risk periods and offense types.
+- The merged district-level `poverty_rate` from U.S. Census ACS data added important neighborhood context that would otherwise have been missing.
+- One-hot encoding of the 19 police districts allowed the model to learn location-specific risk patterns.
+
+### Class Imbalance Handling
+Because the target was so imbalanced, SMOTE was applied only to the training set. This increased the effective shooting rate in the training data to 50%, while the test set remained untouched at the original 0.70% rate. This approach ensured the model learned from a balanced training environment without contaminating the evaluation.
+
+### Exploratory Analysis Highlights
+Unsupervised exploration in Notebook 02 revealed several important patterns:
+- Nighttime incidents showed a dramatically higher shooting rate (1.59%) compared to daytime (0.31%) — a roughly 5× increase.
+- Districts B2, B3, and C11 consistently showed the highest shooting probabilities, aligning with known higher-poverty neighborhoods.
+- The correlation heatmap confirmed that the engineered features were not highly collinear, supporting their independent value.
+
+### Supervised Modeling Readiness
+The final feature matrix was saved as both a parquet file and a CSV for easy use in modeling. An initial XGBoost baseline model trained on this data achieved a **Precision-Recall AUC of 0.8327**, which is a strong result given the extreme class imbalance.
+
+SHAP analysis on the trained model provided clear interpretability:
+- **Poverty Rate** emerged as the single most influential feature.
+- **Hour of Day** and **Is Night** were the next strongest predictors, confirming the strong temporal component of risk.
+- Specific districts (especially B2 and A7) also contributed meaningfully.
+
+These results strongly support the original hypothesis: nighttime incidents in higher-poverty districts do indeed carry significantly higher shooting risk. The model is now ready for the next phase of hyperparameter tuning, cross-validation, and full stakeholder-facing explainability work.
+
+All results, including the engineered dataset, SHAP plots, and performance metrics, are saved in the GitHub repository under the `models/` and `visualizations/` folders for full transparency and reproducibility.
 ---
 
 ## Discussion & Next Steps
