@@ -11,13 +11,19 @@
 
 ## Recap Background & Question
 
-Forensic crime laboratories in Massachusetts face overwhelming caseloads. Ballistics analysis, DNA testing, and firearms examinations are extremely time-consuming and resource-intensive. Yet not every reported crime involves a shooting. Being able to quickly identify which incidents are most likely to involve a firearm would allow labs to triage evidence more effectively and deliver faster results to investigators and victims.
+Forensic crime laboratories across the United States, including the Massachusetts State Police Crime Laboratory, operate under intense pressure. The volume of cases continues to grow while staffing and equipment resources remain limited. Ballistics analysis, DNA testing, firearm examinations, and other specialized forensic work are extremely time-consuming processes that can take weeks or even months to complete. Every hour spent on a low-priority case delays justice for victims of serious violent crimes.
 
-The central research question driving this project is:  
+In Boston, the situation is particularly challenging. The Boston Police Department responds to tens of thousands of reported incidents each year, yet only a small fraction of those incidents actually involve a shooting. Despite this, every reported crime with a potential firearm component must be treated as a possible shooting until proven otherwise. This creates a significant bottleneck: the crime lab must decide which cases deserve immediate forensic attention and which can safely wait. Without an objective, data-driven way to prioritize, valuable laboratory resources are often spread too thin, slowing investigations and reducing the overall effectiveness of the criminal justice system.
+
+This capstone project directly addresses that real-world challenge by developing an **AI Forensic Triage Tool**. The goal is to help forensic analysts and police leadership quickly identify which reported incidents are most likely to involve a shooting so that limited laboratory resources — such as ballistics testing, shell casing analysis, and DNA processing — can be focused on the cases with the highest public safety impact.
+
+The central research question guiding the entire project is:
+
 **Can incident features (time of day, location, district, offense type proxies) combined with neighborhood demographics accurately predict whether a reported crime will involve a shooting?**
 
-We hypothesized that nighttime incidents in higher-poverty districts would show a significantly elevated shooting probability (at least 35% higher than daytime or lower-poverty areas). This report details the data preprocessing and feature engineering steps taken to prepare the dataset for modeling.
+We hypothesized that certain patterns would emerge strongly from the data. Specifically, we predicted that **nighttime incidents occurring in higher-poverty districts would show a significantly elevated probability of involving a shooting** — at least 35% higher compared to daytime incidents or those in lower-poverty areas. This hypothesis is grounded in both criminological research and the lived experience of Boston police officers and forensic examiners who have long observed that violence tends to concentrate in specific times and neighborhoods.
 
+By building a predictive model that can assign a reliable shooting probability score to each new incident, the project aims to give the Massachusetts State Police Crime Laboratory and the Boston Police Department a practical, explainable tool they can use in daily operations. Ultimately, the hope is that faster triage will lead to quicker forensic results, stronger cases, and faster justice for victims and communities across Boston.
 ---
 
 ## Methods
