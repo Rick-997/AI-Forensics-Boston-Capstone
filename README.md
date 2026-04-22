@@ -47,6 +47,7 @@ Forensic crime labs face heavy caseloads. This project uses public Boston crime 
 - `notebooks/` — numbered analysis scripts (01–05)
 - `reports/` — all deliverables
 - `models/` — saved XGBoost model
+- `src/` — Modular Python scripts and custom functions 
 - `visualizations/` — plots and Tableau workbook
 - `visualizations/tableau/` — packaged `.twbx` dashboard file
 
@@ -54,6 +55,21 @@ Forensic crime labs face heavy caseloads. This project uses public Boston crime 
 1. `pip install -r requirements.txt`
 2. Run notebooks in order: `01_data_wrangling.ipynb` → `02_eda.ipynb` → `03_feature_engineering_and_modeling.ipynb` → `04_model_evaluation_and_shap.ipynb` → `05_tableau_data_prep.ipynb`
 3. Open `AI_Forensic_Triage_Tool_Boston_Shooting_Risk_Predictor.twbx` in Tableau Desktop/Public for the interactive dashboard
+
+**Recommended (easiest way):**
+```bash
+python run_all.py
+
+This single command runs the entire pipeline in the correct order.
+Alternative options:
+
+Run individual scripts from the src/ folder one by one
+Open and run the Jupyter notebooks in the notebooks/ folder
+
+After the pipeline finishes, open the Tableau dashboard using:
+
+visualizations/tableau/tableau_ready.csv (connect directly in Tableau), or
+the packaged AI_Forensic_Triage_Tool_Boston_Shooting_Risk_Predictor.twbx file
 
 ## Team & Status
 - Solo project (Ricardo Orellana)
