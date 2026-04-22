@@ -57,8 +57,8 @@ Forensic crime labs face heavy caseloads. This project uses public Boston crime 
 3. Open `AI_Forensic_Triage_Tool_Boston_Shooting_Risk_Predictor.twbx` in Tableau Desktop/Public for the interactive dashboard
 
 **Recommended (easiest way):**
-```bash
-python run_all.py
+
+python run_all.py 
 
 This single command runs the entire pipeline in the correct order.
 Alternative options:
