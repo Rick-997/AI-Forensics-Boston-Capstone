@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 
 # Robust path that works whether you run from notebooks/ or root
 CURRENT_DIR = Path.cwd()
-REPO_ROOT = CURRENT_DIR.parent if CURRENT_DIR.name == "notebooks" else CURRENT_DIR
+REPO_ROOT = CURRENT_DIR.parent if CURRENT_DIR.name == "src" else CURRENT_DIR
 DATA_PROCESSED = REPO_ROOT / "data" / "processed"
 VISUALIZATIONS = REPO_ROOT / "visualizations"
 VISUALIZATIONS.mkdir(parents=True, exist_ok=True)

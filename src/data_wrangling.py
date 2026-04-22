@@ -9,7 +9,7 @@ RAW_CSV_URL = "https://raw.githubusercontent.com/Rick-997/AI-Forensics-Boston-Ca
 
 # Robust path that always finds the repo root
 CURRENT_DIR = Path.cwd()
-if CURRENT_DIR.name == "notebooks":
+if CURRENT_DIR.name == "src":
     REPO_ROOT = CURRENT_DIR.parent          # Go up one level from notebooks/
 else:
     REPO_ROOT = CURRENT_DIR
