@@ -61,6 +61,7 @@ Forensic crime labs face heavy caseloads. This project uses public Boston crime 
 python run_all.py 
 
 This single command runs the entire pipeline in the correct order.
+
 Alternative options:
 
 Run individual scripts from the src/ folder one by one
