@@ -9,18 +9,18 @@
 
 ## Background & Question (Recap)
 
-Forensic crime laboratories operate under intense pressure. Every shooting incident requires extensive resources — ballistics analysis, firearm tracing, DNA testing on recovered evidence, and often multiple rounds of laboratory work. These processes are time-consuming, expensive, and critical for building strong prosecutorial cases. At the same time, the Boston Police Department responds to tens of thousands of crime incidents each year, the vast majority of which do not involve firearms. 
+Forensic crime laboratories operate under intense pressure. Every shooting incident requires extensive resources, ballistics analysis, firearm tracing, DNA testing on recovered evidence, and often multiple rounds of laboratory work. These processes are time-consuming, expensive, and critical for building strong prosecutorial cases. At the same time, the Boston Police Department responds to tens of thousands of crime incidents each year, the vast majority of which do not involve firearms. 
 
 The current workflow treats every potential firearms-related report with the same level of urgency because there is no reliable, data-driven method to triage cases at the moment an incident is logged. This uniform approach creates significant backlogs, delays justice in the most serious cases, and places unnecessary strain on already limited laboratory resources.
 
 This capstone project addresses that operational gap by developing an AI Forensic Triage Tool. The central research question is:  
 **Can incident features (time of day, location, district, offense type proxies) combined with neighborhood demographics accurately predict whether a reported crime will involve a shooting?**
 
-I hypothesized that nighttime incidents in higher-poverty districts would show a significantly higher probability of involving a shooting — at least 35% higher than daytime or lower-poverty areas. This report presents the baseline modeling phase, including the methodological choices I made, the assumptions behind them, the results obtained, and how these results align with both the original hypothesis and the feedback received on the finalized proposal.
+I hypothesized that nighttime incidents in higher-poverty districts would show a significantly higher probability of involving a shooting, at least 35% higher than daytime or lower-poverty areas. This report presents the baseline modeling phase, including the methodological choices I made, the assumptions behind them, the results obtained, and how these results align with both the original hypothesis and the feedback received on the finalized proposal.
 
 ## Methods
 
-After completing data preprocessing and feature engineering, I trained a baseline XGBoost classifier on the final prepared dataset containing 239,371 records and 24 engineered features. I selected XGBoost as the initial algorithm because it is well-suited for tabular data, natively supports class imbalance through weighting, and integrates seamlessly with SHAP explainability — a critical requirement for building trust with forensic stakeholders who need to understand why the model flags certain incidents as high-risk.
+After completing data preprocessing and feature engineering, I trained a baseline XGBoost classifier on the final prepared dataset containing 239,371 records and 24 engineered features. I selected XGBoost as the initial algorithm because it is well-suited for tabular data, natively supports class imbalance through weighting, and integrates seamlessly with SHAP explainability, a critical requirement for building trust with forensic stakeholders who need to understand why the model flags certain incidents as high-risk.
 
 The modeling pipeline included the following steps:
 
@@ -28,7 +28,7 @@ The modeling pipeline included the following steps:
 
 2. To address the extreme class imbalance (only 0.70% positive SHOOTING cases), I replaced the previously used SMOTE oversampling with **class weighting** via the `scale_pos_weight` parameter in XGBoost (calculated as 141.59). This approach trains the model on the original data distribution while giving higher importance to the minority class, which is more appropriate for real-world crime prediction where synthetic samples could introduce unrealistic patterns.
 
-3. I trained the model using reasonable baseline hyperparameters: `n_estimators=200`, `learning_rate=0.1`, `max_depth=6`, `subsample=0.8`, and `colsample_bytree=0.8`. No hyperparameter tuning was performed at this stage — the goal was to establish a true baseline performance level.
+3. I trained the model using reasonable baseline hyperparameters: `n_estimators=200`, `learning_rate=0.1`, `max_depth=6`, `subsample=0.8`, and `colsample_bytree=0.8`. No hyperparameter tuning was performed at this stage, the goal was to establish a true baseline performance level.
 
 4. I evaluated the model exclusively using Precision-Recall AUC and the classification report on the original imbalanced test set.
 
