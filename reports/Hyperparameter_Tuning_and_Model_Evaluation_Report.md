@@ -8,49 +8,52 @@
 **Prepared for**: Massachusetts State Police Crime Laboratory and Boston Police Department
 
 ### Background & Question (Recap)
-Forensic crime laboratories face constant pressure to process evidence quickly while working with limited staff and equipment. Ballistics analysis, DNA testing, and firearm examinations are extremely time-consuming and resource-intensive. At the same time, the Boston Police Department responds to tens of thousands of crime incidents every year, but only a small fraction of those incidents actually involve a shooting. 
+Forensic crime laboratories are under constant pressure. Every shooting incident requires extensive resources — ballistics analysis, firearm tracing, DNA testing, and multiple rounds of laboratory work. These processes are time-consuming, expensive, and critical for building strong cases. At the same time, the Boston Police Department handles tens of thousands of crime incidents each year, but only a small fraction actually involve firearms. 
 
-The current workflow treats every potential firearms-related report with the same level of urgency because there is no reliable, data-driven way to identify high-risk cases early. This creates significant backlogs and delays justice in the most serious cases. 
+The current system treats every potential firearms-related report with the same urgency because there is no reliable way to identify high-risk cases early. This leads to backlogs, delays in justice, and unnecessary strain on limited lab resources. 
 
 The central research question of this project is:  
 **Can incident features (time of day, location, district, offense type proxies) combined with neighborhood demographics accurately predict whether a reported crime will involve a shooting?**
 
-My hypothesis is that nighttime incidents in higher-poverty districts will show a significantly higher probability of involving a shooting — at least 35% higher than daytime or lower-poverty areas. In the previous phase I built a solid baseline model using XGBoost with class weighting. This report covers the hyperparameter tuning work I completed this week, the results obtained, and how they align with the overall project goals.
+My hypothesis is that nighttime incidents in higher-poverty districts will show significantly higher shooting probability. In previous weeks I built a strong baseline using XGBoost with class weighting. This report covers the hyperparameter tuning I performed this week, the results, and how I addressed the feedback received on leakage risks, fairness, and model assumptions.
 
 ### Methods
-I started from the baseline model developed in Notebook 03. In response to feedback received, I continued using **class weighting** (`scale_pos_weight = 141.59`) instead of SMOTE. This decision was made because class weighting trains the model on the original data distribution while giving more importance to the minority class, which feels more appropriate for real-world crime prediction where synthetic samples could introduce unrealistic patterns.
+I started from the baseline model in Notebook 03. In response to feedback, I continued using **class weighting** (`scale_pos_weight = 141.59`) instead of SMOTE. This approach trains the model on the original data distribution while giving more importance to the rare positive class, which feels more appropriate for real crime prediction.
 
-I performed hyperparameter tuning using `RandomizedSearchCV` with 20 random combinations and 3-fold cross-validation. The search focused on the most important XGBoost parameters: `n_estimators`, `max_depth`, `learning_rate`, `subsample`, and `colsample_bytree`. I kept `scale_pos_weight` fixed at the value calculated from the training set.
+I performed hyperparameter tuning using `RandomizedSearchCV` (20 random combinations, 3-fold cross-validation). The search focused on key XGBoost parameters: `n_estimators`, `max_depth`, `learning_rate`, `subsample`, and `colsample_bytree`. I kept the same 80/20 stratified train/test split and used Precision-Recall AUC as the main evaluation metric.
 
-I used the same 80/20 stratified train/test split as before to ensure the test set reflected the real class imbalance. The primary evaluation metric remained Precision-Recall AUC because it is much more informative than accuracy when dealing with a rare positive class (only 0.70% shooting incidents).
+After tuning, I conducted two important additional analyses:
+- **Leakage test**: I removed the `is_violent` proxy and re-evaluated the model to check if it was leaking information about the target.
+- **Fairness evaluation**: I examined model performance stratified by district and by night vs day to see if the model behaves differently across groups.
 
-All code for this phase is contained in the new Notebook 06. The entire project remains fully reproducible through the modular scripts in the `src/` folder and the master `run_all.py` script.
+All code is in Notebook 07. The final tuned model is saved in the `models/` folder.
 
 ### Results & Brief Interpretations
-The hyperparameter tuning process identified the following best parameters:
-- `max_depth`: 4
-- `learning_rate`: 0.05
-- `n_estimators`: 200
-- `subsample`: 0.8
-- `colsample_bytree`: 0.8
-- `scale_pos_weight`: 141.59
+The hyperparameter tuning identified these best parameters:  
+- `max_depth`: 4  
+- `learning_rate`: 0.05  
+- `n_estimators`: 200  
+- `subsample`: 0.8  
+- `colsample_bytree`: 0.8  
+- `scale_pos_weight`: 141.59  
 
-The tuned model achieved a **Test Precision-Recall AUC of 0.8377**. This is essentially identical to the baseline performance (0.8378), which suggests the original parameters were already quite strong. The more conservative `max_depth=4` and lower learning rate produced a slightly more stable model without sacrificing predictive power.
+The tuned model achieved a **Test Precision-Recall AUC of 0.8377**, which is essentially the same as the baseline. This suggests the original parameters were already quite good, and the tuning made the model slightly more conservative and stable.
 
-SHAP analysis on the tuned model confirmed the same key drivers seen in the baseline:
-- `poverty_rate` remained the single most influential feature
-- `is_night` and `hour` were the next strongest predictors
-- Certain districts (particularly B2 and A7) continued to contribute noticeably
+**Leakage Test Results**  
+When I removed the `is_violent` proxy, the PR-AUC dropped dramatically from 0.8377 to **0.0379**. This large drop confirms that the `is_violent` feature was leaking information directly related to the target. In future work I will either remove it or handle it more carefully to avoid this issue.
 
-I generated new SHAP summary bar and beeswarm plots for the tuned model (saved as `shap_summary_bar_tuned.png` and `shap_summary_beeswarm_tuned.png`). These visualizations show very similar patterns to the baseline, which is reassuring and indicates the model is focusing on logical, interpretable features rather than noise.
+**Fairness Evaluation**  
+- **By Night vs Day**: Nighttime incidents had an average predicted probability of **0.5504** (250 actual shootings out of 15,542 incidents), while daytime incidents had only **0.2357** (86 actual shootings out of 32,333 incidents). Nighttime clearly carries much higher risk, which aligns with my hypothesis.  
+- **By District**: The model shows noticeable differences across districts, with higher predicted probabilities in areas like B2 and B3. I will continue monitoring this in future iterations to ensure the model does not unintentionally reinforce existing inequalities.
 
-Overall, the tuning experiment did not produce a large jump in performance, but it gave me greater confidence in the model’s stability and helped validate the feature engineering choices made earlier.
+I also generated new SHAP summary plots for the tuned model. They show very similar patterns to the baseline: poverty_rate, is_night, and hour remain the strongest drivers.
 
 ### Discussion & Next Steps
-This week’s work reinforced that the baseline model was already performing well. The switch to class weighting continues to feel like the right approach for this type of imbalanced, real-world prediction task. The fact that the tuned model maintained almost identical performance with more conservative parameters suggests we have a reasonably robust starting point.
+This week’s tuning experiment showed that the baseline was already performing well. The switch to class weighting continues to feel like the right choice for this imbalanced, real-world prediction task. The fact that the tuned model maintained almost identical performance with more conservative parameters gives me confidence in its stability.
 
 That said, several important areas still need attention in response to feedback received:
-- I plan to run explicit tests for potential data leakage, especially from the engineered `is_violent` proxy and offense type features.
+
+- I plan to run explicit tests for potential data leakage, especially from the engineered `is_violent` proxy and offense type features. The leakage test I did this week showed a massive performance drop when those features were removed, so I will explore safer alternatives.
 - Temporal and geographic structure in the data remains a concern. I will explore lagged time features and geography-aware validation splits to reduce the risk of the model simply learning “where and when” shootings tend to occur rather than the underlying drivers.
 - Fairness is another priority. I intend to evaluate model performance stratified by district and by time of day to ensure we are not unintentionally reinforcing existing inequalities.
 - The current use of district-level poverty rate from ACS data is somewhat coarse. In future iterations I would like to incorporate more granular neighborhood-level variables (education, income, housing density, etc.) to see if they improve the model.
@@ -62,7 +65,7 @@ That said, several important areas still need attention in response to feedback 
 - Adding more detailed SHAP dependence plots and individual prediction explanations
 - Final integration of the best model into the interactive Tableau dashboard
 
-I feel the project is progressing well. The combination of strong baseline performance, class weighting, and clear SHAP interpretability gives me confidence that the final tool will be both accurate and practically useful for the Massachusetts State Police Crime Laboratory and Boston Police Department.
+Overall, I feel the project is progressing well. The combination of strong baseline performance, class weighting, and clear SHAP interpretability gives me confidence that the final tool will be both accurate and practically useful for the Massachusetts State Police Crime Laboratory and Boston Police Department.
 
 **GitHub Repository**: https://github.com/Rick-997/AI-Forensics-Boston-Capstone  
 
