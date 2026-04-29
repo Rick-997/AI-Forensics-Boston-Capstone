@@ -1,28 +1,36 @@
 # ========================================================
 # run_all.py
 # Master script to run the entire AI Forensic Triage Tool pipeline
+# Works whether you run it from the repo root OR from inside the src/ folder
 # ========================================================
 
 import subprocess
 from pathlib import Path
 
+# Robust repo root detection
+CURRENT_DIR = Path.cwd()
+if CURRENT_DIR.name == "src":
+    REPO_ROOT = CURRENT_DIR.parent          # we are inside src/
+else:
+    REPO_ROOT = CURRENT_DIR                 # we are in the repo root
+
 print("🚀 Starting Full Pipeline: AI Forensic Triage Tool")
 print("Capstone Project — DSE 6311\n")
 
 scripts = [
-    "src/01_data_wrangling.py",
-    "src/02_eda.py",
-    "src/03_feature_engineering_and_modeling.py",
-    "src/04_model_evaluation_and_shap.py",
-    "src/05_tableau_data_prep.py",
-    "src/06_hyperparameter_tuning_and_evaluation.py",
-    "src/07_final_model_leakage_test_and_fairness_evaluation.py"
+    "01_data_wrangling.py",
+    "02_eda.py",
+    "03_feature_engineering_and_modeling.py",
+    "04_model_evaluation_and_shap.py",
+    "05_tableau_data_prep.py",
+    "06_hyperparameter_tuning_and_evaluation.py",
+    "07_final_model_leakage_test_and_fairness_evaluation.py"
 ]
 
 success = True
 
 for script in scripts:
-    script_path = Path(script)
+    script_path = REPO_ROOT / "src" / script
     print(f"\n{'='*70}")
     print(f"▶️  Running: {script}")
     print(f"{'='*70}\n")
@@ -40,7 +48,7 @@ for script in scripts:
         success = False
         break
     except FileNotFoundError:
-        print(f"❌ ERROR: Could not find {script}")
+        print(f"❌ ERROR: Could not find {script_path}")
         success = False
         break
 
@@ -49,7 +57,6 @@ if success:
     print("🎉 CONGRATULATIONS! FULL PIPELINE COMPLETED SUCCESSFULLY!")
     print("="*70)
     print("✅ All 7 scripts executed without errors")
-    print("✅ Data wrangling, EDA, modeling, evaluation, and Tableau prep are done")
     print("\n📁 Your project is now fully up to date!")
     print("You can now open Tableau and connect to:")
     print("   visualizations/tableau/tableau_ready.csv")
