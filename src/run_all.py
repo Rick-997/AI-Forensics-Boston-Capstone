@@ -14,7 +14,9 @@ scripts = [
     "src/02_eda.py",
     "src/03_feature_engineering_and_modeling.py",
     "src/04_model_evaluation_and_shap.py",
-    "src/05_tableau_data_prep.py"
+    "src/05_tableau_data_prep.py",
+    "src/06_hyperparameter_tuning_and_evaluation.py",
+    "src/07_final_model_leakage_test_and_fairness_evaluation.py"
 ]
 
 success = True
@@ -44,13 +46,10 @@ for script in scripts:
 
 if success:
     print("="*70)
-    print("🎉 CONGRATULATIONS! ALL SCRIPTS RAN SUCCESSFULLY!")
+    print("🎉 CONGRATULATIONS! FULL PIPELINE COMPLETED SUCCESSFULLY!")
     print("="*70)
-    print("✅ Data wrangling completed")
-    print("✅ EDA completed")
-    print("✅ Feature engineering + XGBoost model completed")
-    print("✅ Model evaluation + SHAP plots completed")
-    print("✅ Tableau-ready CSV generated")
+    print("✅ All 7 scripts executed without errors")
+    print("✅ Data wrangling, EDA, modeling, evaluation, and Tableau prep are done")
     print("\n📁 Your project is now fully up to date!")
     print("You can now open Tableau and connect to:")
     print("   visualizations/tableau/tableau_ready.csv")
