@@ -8,7 +8,7 @@
 **Prepared for**: Massachusetts State Police Crime Laboratory and Boston Police Department
 
 ## Background & Question (Recap)
-Forensic crime laboratories are under constant pressure. Every shooting incident requires extensive resources — ballistics analysis, firearm tracing, DNA testing, and multiple rounds of laboratory work. These processes are time-consuming, expensive, and critical for building strong cases. At the same time, the Boston Police Department handles tens of thousands of crime incidents each year, but only a small fraction actually involve firearms.
+Forensic crime labs are under constant pressure. Every shooting incident requires extensive resources — ballistics analysis, firearm tracing, DNA testing, and multiple rounds of laboratory work. These processes are time-consuming, expensive, and critical for building strong cases. At the same time, the Boston Police Department handles tens of thousands of crime incidents each year, but only a small fraction actually involve firearms.
 
 The current system treats every potential firearms-related report with the same urgency because there is no reliable way to identify high-risk cases early. This leads to backlogs, delays in justice, and unnecessary strain on limited lab resources.
 
@@ -44,7 +44,7 @@ When I removed the `is_violent` proxy, the PR-AUC dropped dramatically from 0.83
 
 **Fairness Evaluation**  
 - **By Night vs Day**: Nighttime incidents had an average predicted probability of **0.5504** (250 actual shootings out of 15,542 incidents), while daytime incidents had only **0.2357** (86 actual shootings out of 32,333 incidents). Nighttime clearly carries much higher risk, which aligns with my hypothesis.  
-- **By District**: The model shows noticeable differences across districts, with higher predicted probabilities in areas like B2 and B3. I will continue monitoring this in future iterations to ensure the model does not unintentionally reinforce existing inequalities.
+- **By District**: The model shows noticeable differences across districts, with higher predicted probabilities in areas like B2 and B3.
 
 I also generated new SHAP summary plots for the tuned model (see Figures 1 and 2 below). They show very similar patterns to the baseline: poverty_rate, is_night, and hour remain the strongest drivers.
 
