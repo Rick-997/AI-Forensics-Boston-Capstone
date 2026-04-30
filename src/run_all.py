@@ -57,7 +57,7 @@ if success:
     print("🎉 CONGRATULATIONS! FULL PIPELINE COMPLETED SUCCESSFULLY!")
     print("="*70)
     print("✅ All 7 scripts executed without errors")
-    print("\n📁 Your project is now fully up to date!")
+    print("\n📁 The project is now fully up to date!")
     print("You can now open Tableau and connect to:")
     print("   visualizations/tableau/tableau_ready.csv")
 else:
