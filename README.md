@@ -1,9 +1,8 @@
 # AI Forensic Triage Tool: Predicting Shooting Incidents in Boston
 
 **Capstone Project — DSE 6311**  
-**Author**: Ricardo Orellana  
+**Author**: Ricardo Orellana (Team Sigma)
 
-## Interactive Dashboard
 **[🔗 View Live Tableau Dashboard](https://public.tableau.com/app/profile/ricardo.orellana8607/viz/AIForensicTriageTool-BostonShootingRiskPredictor/AIForensicTriageToolBostonShootingRiskMap)**
 
 ---
@@ -21,9 +20,6 @@ Can incident features (time of day, location, district, offense type proxies) an
 Nighttime incidents in higher-poverty districts will show significantly higher probability of involving a shooting (expected ≥35% increase compared to daytime or lower-poverty areas).  
 We predict the XGBoost model with SHAP explainability will achieve high Precision-Recall AUC and be ready for real-world use by the Massachusetts State Police Crime Laboratory and Boston Police Department.
 
-## Overview
-Forensic crime labs face heavy caseloads. This project uses public Boston crime data and neighborhood demographics to predict whether a reported incident involves a shooting, enabling smarter triage and faster justice.
-
 ## Objectives
 - Predict shooting probability using time, location, district, and socioeconomic factors
 - Achieve high Precision-Recall AUC despite severe class imbalance
@@ -31,49 +27,56 @@ Forensic crime labs face heavy caseloads. This project uses public Boston crime 
 - Deliver actionable insights for Massachusetts State Police Crime Laboratory and Boston Police Department
 
 ## Data Sources
-- Boston Police Crime Incident Reports (2023–present): ~239k rows from [data.boston.gov](https://data.boston.gov) (SHOOTING = target)
-- U.S. Census ACS 2020–2024: Boston neighborhoods (poverty, income, education, race, housing density)
+- Boston Police Crime Incident Reports (2023–present): ~239k rows from [data.boston.gov](https://data.boston.gov)
+- U.S. Census ACS 2020–2024: Boston neighborhoods (poverty, income, education, etc.)
 
 ## Methodology
 - Data cleaning and feature engineering (circular time encoding, violent offense proxy, census merge)
-- XGBoost classifier with SMOTE for class imbalance
+- XGBoost classifier with class weighting (instead of SMOTE per professor feedback)
 - Evaluation: Precision-Recall AUC, F1-score
-- Interpretability: SHAP values
+- Interpretability: SHAP values + leakage test + fairness evaluation by night vs day
 - Interactive visualization: Tableau dashboard
 
-## Repository Organization
-- `data/raw/` — original downloads
-- `data/processed/` — cleaned files
-- `notebooks/` — numbered analysis scripts (01–05)
-- `reports/` — all deliverables
-- `models/` — saved XGBoost model
-- `src/` — Modular Python scripts and custom functions 
-- `visualizations/` — plots and Tableau workbook
-- `visualizations/tableau/` — packaged `.twbx` dashboard file
+## Repository Structure
+```bash
+AI-Forensics-Boston-Capstone/
+├── data/
+│   ├── raw/
+│   └── processed/
+├── models/                          # XGBoost model + SHAP plots
+├── notebooks/                       # Jupyter notebooks (for reference)
+├── src/                             # Clean modular Python scripts
+│   ├── 01_data_wrangling.py
+│   ├── 02_eda.py
+│   ├── 03_feature_engineering_and_modeling.py
+│   ├── 04_model_evaluation_and_shap.py
+│   ├── 05_tableau_data_prep.py
+│   ├── 06_hyperparameter_tuning_and_evaluation.py
+│   ├── 07_final_model_leakage_test_and_fairness_evaluation.py
+│   ├── data_utils.py
+│   ├── feature_engineering.py
+│   └── init.py
+├── visualizations/
+│   └── tableau/
+├── reports/
+├── final_delivery/
+├── run_all.py                       # ← One-command full pipeline
+├── README.md
+└── requirements.txt
+```
 
-## How to Run
-1. `pip install -r requirements.txt`
-2. Run notebooks in order: `01_data_wrangling.ipynb` → `02_eda.ipynb` → `03_feature_engineering_and_modeling.ipynb` → `04_model_evaluation_and_shap.ipynb` → `05_tableau_data_prep.ipynb`
-3. Open `AI_Forensic_Triage_Tool_Boston_Shooting_Risk_Predictor.twbx` in Tableau Desktop/Public for the interactive dashboard
+## How to Run the Full Pipeline
 
 **Recommended (easiest way):**
+```bash
+python run_all.py
 
-python run_all.py 
-
-This single command runs the entire pipeline in the correct order.
-
-Alternative options:
-
-Run individual scripts from the src/ folder one by one
-Open and run the Jupyter notebooks in the notebooks/ folder
-
-After the pipeline finishes, open the Tableau dashboard using:
-
-visualizations/tableau/tableau_ready.csv (connect directly in Tableau), or
-the packaged AI_Forensic_Triage_Tool_Boston_Shooting_Risk_Predictor.twbx file
+This single command runs all 7 scripts in the correct order.
+```
 
 ## Team & Status
-- Solo project (Ricardo Orellana)
-- **Complete**: Data wrangling, EDA, modeling, SHAP explainability, and interactive Tableau dashboard published
 
-**Last updated**: April 2026
+Solo project (Ricardo Orellana)
+Complete: Data wrangling, EDA, modeling, SHAP explainability, leakage/fairness tests, and interactive Tableau dashboard
+
+Last updated: April 2026
