@@ -70,9 +70,9 @@ AI-Forensics-Boston-Capstone/
 **Recommended (easiest way):**
 ```bash
 python run_all.py
-
-This single command runs all 7 scripts in the correct order.
 ```
+This single command runs all 7 scripts in the correct order.
+
 
 ## Team & Status
 
