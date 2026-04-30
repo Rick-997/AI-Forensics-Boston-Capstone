@@ -5,9 +5,5 @@ seaborn
 scikit-learn
 xgboost
 shap
-imbalanced-learn
 pyarrow
-jupyter
-xgboost
-shap
-imbalanced-learn
+requests
