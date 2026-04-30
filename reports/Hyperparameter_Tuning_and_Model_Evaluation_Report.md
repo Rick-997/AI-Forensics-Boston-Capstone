@@ -7,28 +7,28 @@
 
 **Prepared for**: Massachusetts State Police Crime Laboratory and Boston Police Department
 
-### Background & Question (Recap)
-Forensic crime laboratories are under constant pressure. Every shooting incident requires extensive resources — ballistics analysis, firearm tracing, DNA testing, and multiple rounds of laboratory work. These processes are time-consuming, expensive, and critical for building strong cases. At the same time, the Boston Police Department handles tens of thousands of crime incidents each year, but only a small fraction actually involve firearms. 
+## Background & Question (Recap)
+Forensic crime labs are under constant pressure. Every shooting incident requires extensive resources — ballistics analysis, firearm tracing, DNA testing, and multiple rounds of laboratory work. These processes are time-consuming, expensive, and critical for building strong cases. At the same time, the Boston Police Department handles tens of thousands of crime incidents each year, but only a small fraction actually involve firearms.
 
-The current system treats every potential firearms-related report with the same urgency because there is no reliable way to identify high-risk cases early. This leads to backlogs, delays in justice, and unnecessary strain on limited lab resources. 
+The current system treats every potential firearms-related report with the same urgency because there is no reliable way to identify high-risk cases early. This leads to backlogs, delays in justice, and unnecessary strain on limited lab resources.
 
 The central research question of this project is:  
 **Can incident features (time of day, location, district, offense type proxies) combined with neighborhood demographics accurately predict whether a reported crime will involve a shooting?**
 
 My hypothesis is that nighttime incidents in higher-poverty districts will show significantly higher shooting probability. In previous weeks I built a strong baseline using XGBoost with class weighting. This report covers the hyperparameter tuning I performed this week, the results, and how I addressed the feedback received on leakage risks, fairness, and model assumptions.
 
-### Methods
+## Methods
 I started from the baseline model in Notebook 03. In response to feedback, I continued using **class weighting** (`scale_pos_weight = 141.59`) instead of SMOTE. This approach trains the model on the original data distribution while giving more importance to the rare positive class, which feels more appropriate for real crime prediction.
 
 I performed hyperparameter tuning using `RandomizedSearchCV` (20 random combinations, 3-fold cross-validation). The search focused on key XGBoost parameters: `n_estimators`, `max_depth`, `learning_rate`, `subsample`, and `colsample_bytree`. I kept the same 80/20 stratified train/test split and used Precision-Recall AUC as the main evaluation metric.
 
-After tuning, I conducted two important additional analyses:
+After tuning, I conducted two important additional analyses in Notebook 07:
 - **Leakage test**: I removed the `is_violent` proxy and re-evaluated the model to check if it was leaking information about the target.
 - **Fairness evaluation**: I examined model performance stratified by district and by night vs day to see if the model behaves differently across groups.
 
 All code is in Notebook 07. The final tuned model is saved in the `models/` folder.
 
-### Results & Brief Interpretations
+## Results & Brief Interpretations
 The hyperparameter tuning identified these best parameters:  
 - `max_depth`: 4  
 - `learning_rate`: 0.05  
@@ -48,7 +48,7 @@ When I removed the `is_violent` proxy, the PR-AUC dropped dramatically from 0.83
 
 I also generated new SHAP summary plots for the tuned model. They show very similar patterns to the baseline: poverty_rate, is_night, and hour remain the strongest drivers.
 
-### Discussion & Next Steps
+## Discussion & Next Steps
 This week’s tuning experiment showed that the baseline was already performing well. The switch to class weighting continues to feel like the right choice for this imbalanced, real-world prediction task. The fact that the tuned model maintained almost identical performance with more conservative parameters gives me confidence in its stability.
 
 That said, several important areas still need attention in response to feedback received:
