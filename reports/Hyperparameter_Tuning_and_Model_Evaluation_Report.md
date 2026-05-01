@@ -18,13 +18,19 @@ The central research question of this project is:
 My hypothesis is that nighttime incidents in higher-poverty districts will show significantly higher shooting probability. In previous weeks I built a strong baseline using XGBoost with class weighting. This report covers the hyperparameter tuning I performed this week, the results, and how I addressed the feedback received on leakage risks, fairness, temporal/geographic structure, and model assumptions.
 
 ## Methods
-I started from the baseline model in Notebook 03. In response to feedback, I continued using **class weighting** (`scale_pos_weight = 141.59`) instead of SMOTE. This approach trains the model on the original data distribution while giving more importance to the rare positive class.
+I started from the baseline model in Notebook 03. In response to feedback, I continued using **class weighting** (`scale_pos_weight = 141.59`) instead of SMOTE. This approach trains the model on the original data distribution while giving more importance to the rare positive class, which feels more appropriate for real crime prediction.
 
+**Additional Models**  
+I chose to stick with XGBoost for this stage because it performed very well in the baseline and is known for handling imbalanced tabular data effectively. I did not test other models (Random Forest or LightGBM) yet — I plan to compare them in the next phase before the final deliverable.
+
+**Hyperparameter Tuning**  
 I performed hyperparameter tuning using `RandomizedSearchCV` (20 random combinations, 3-fold cross-validation). The search focused on key XGBoost parameters: `n_estimators`, `max_depth`, `learning_rate`, `subsample`, and `colsample_bytree`. I kept the same 80/20 stratified train/test split and used Precision-Recall AUC as the main evaluation metric.
 
-After tuning, I conducted two important additional analyses in Notebook 07:
-- **Leakage test**: Removed the `is_violent` proxy and re-evaluated the model.
-- **Fairness evaluation**: Examined model performance stratified by night vs day and by district.
+To control for overfitting I used:
+- 3-fold cross-validation during the search
+- Stratified train/test split to preserve class distribution
+- Conservative parameter ranges (e.g., max_depth limited to 4 in the final best model)
+- The built-in `eval_metric='aucpr'` in XGBoost
 
 All code is in Notebook 07. The final tuned model is saved in the `models/` folder.
 
@@ -55,7 +61,7 @@ I also generated new SHAP summary plots for the tuned model (see Figures 1 and 2
 ![SHAP Summary Plot (Beeswarm) - Tuned Model](../models/shap_summary_beeswarm_tuned.png)
 
 **Note on `district_Unknown`**  
-In both SHAP plots you will notice a feature called `district_Unknown`. This column was created during the one-hot encoding step because some incidents in the original dataset had no police district assigned (or were coded as "Unknown"). Approximately 5-10% of records fall into this category. The model learned that incidents with unknown district have a slightly different shooting probability pattern, which is why the feature shows up in the SHAP analysis.
+In both SHAP plots you will notice a feature called `district_Unknown`. This column was created during one-hot encoding because some incidents in the original dataset had no police district assigned (or were coded as "Unknown"). Approximately 5-10% of records fall into this category. The model learned that incidents with unknown district have a slightly different shooting probability pattern, which is why the feature shows up in the SHAP analysis.
 
 ## Discussion & Next Steps
 This week’s tuning experiment showed that the baseline was already performing well. The switch to class weighting continues to feel like the right choice for this imbalanced, real-world prediction task. The fact that the tuned model maintained almost identical performance with more conservative parameters gives me confidence in its stability.
@@ -80,5 +86,23 @@ Overall, I feel the project is progressing well. The combination of strong basel
 
 **Live Tableau Dashboard**:  
 [AI Forensic Triage Tool – Boston Shooting Risk Predictor](https://public.tableau.com/app/profile/ricardo.orellana8607/viz/AIForensicTriageTool-BostonShootingRiskPredictor/AIForensicTriageToolBostonShootingRiskMap)
+
+**Last updated**: April 2026
+
+---
+
+## Appendix – Data Dictionary
+
+| Column Name          | Description |
+|----------------------|-------------|
+| hour                 | Hour of the day (0-23) |
+| is_night             | Binary flag (1 = night 6PM–6AM) |
+| is_weekend           | Binary flag (1 = weekend) |
+| is_violent           | Violent offense proxy (1 = assault, robbery, homicide, etc.) |
+| poverty_rate         | District-level poverty rate from ACS (proxy) |
+| district_*           | One-hot encoded police districts (including district_Unknown) |
+| SHOOTING             | Target variable (1 = shooting incident) |
+| predicted_prob       | Model’s predicted probability of shooting |
+| shap_*               | SHAP values for each feature |
 
 **Last updated**: April 2026
