@@ -40,13 +40,13 @@ The hyperparameter tuning identified these best parameters:
 The tuned model achieved a **Test Precision-Recall AUC of 0.8377**, essentially the same as the baseline.
 
 **Leakage Test Results**  
-When I removed the `is_violent` proxy, the PR-AUC dropped dramatically from 0.8377 to **0.0379**. This confirms the feature was leaking information directly related to the target.
+When I removed the `is_violent` proxy, the PR-AUC dropped dramatically from 0.8377 to **0.0379**. This large drop confirms that the `is_violent` feature was leaking information directly related to the target.
 
 **Fairness Evaluation**  
 - **By Night vs Day**: Nighttime incidents had an average predicted probability of **0.5504** (250 actual shootings), while daytime incidents had only **0.2357** (86 actual shootings).  
 - **By District**: Noticeable differences appear across districts, with higher predicted probabilities in areas like B2 and B3.
 
-**SHAP Analysis (Tuned Model)**
+I also generated new SHAP summary plots for the tuned model (see Figures 1 and 2 below). They show very similar patterns to the baseline: poverty_rate, is_night, and hour remain the strongest drivers.
 
 **Figure 1: SHAP Feature Importance - Tuned Model (Top 15)**  
 ![SHAP Feature Importance - Tuned Model (Top 15)](../models/shap_summary_bar_tuned.png)
@@ -54,19 +54,23 @@ When I removed the `is_violent` proxy, the PR-AUC dropped dramatically from 0.83
 **Figure 2: SHAP Summary Plot (Beeswarm) - Tuned Model**  
 ![SHAP Summary Plot (Beeswarm) - Tuned Model](../models/shap_summary_beeswarm_tuned.png)
 
-These plots show that poverty_rate, is_night, and hour remain the strongest drivers of the predictions.
+**Note on `district_Unknown`**  
+In both SHAP plots you will notice a feature called `district_Unknown`. This column was created during the one-hot encoding step because some incidents in the original dataset had no police district assigned (or were coded as "Unknown"). Approximately 5-10% of records fall into this category. The model learned that incidents with unknown district have a slightly different shooting probability pattern, which is why the feature shows up in the SHAP analysis.
 
 ## Discussion & Next Steps
 This week’s tuning experiment showed that the baseline was already performing well. The switch to class weighting continues to feel like the right choice for this imbalanced, real-world prediction task. The fact that the tuned model maintained almost identical performance with more conservative parameters gives me confidence in its stability.
 
-That said, several important areas still need attention:
-- Leakage from the `is_violent` proxy is a clear concern and will be addressed in future iterations.
-- Temporal and geographic structure in the data remains a risk. I plan to explore lagged time features and geography-aware validation splits.
-- Fairness across districts and time of day will be monitored more closely to avoid reinforcing existing inequalities.
-- The current district-level poverty rate from ACS is somewhat coarse. I would like to incorporate more granular neighborhood-level variables in future work.
+That said, several important areas still need attention in response to feedback received:
+
+- I plan to run explicit tests for potential data leakage, especially from the engineered `is_violent` proxy and offense type features. The leakage test I did this week showed a massive performance drop when those features were removed, so I will explore safer alternatives.
+- Temporal and geographic structure in the data remains a concern. I will explore lagged time features and geography-aware validation splits to reduce the risk of the model simply learning “where and when” shootings tend to occur rather than the underlying drivers.
+- Fairness is another priority. I intend to evaluate model performance stratified by district and by time of day to ensure we are not unintentionally reinforcing existing inequalities.
+- The current use of district-level poverty rate from ACS data is somewhat coarse. In future iterations I would like to incorporate more granular neighborhood-level variables (education, income, housing density, etc.) to see if they improve the model.
 
 **Next steps** before the final deliverable include:
-- Comparing XGBoost against Random Forest and LightGBM
+- Comparing XGBoost against Random Forest and LightGBM to determine the best overall model
+- Completing systematic hyperparameter tuning with a larger search space if time allows
+- Conducting the fairness and leakage diagnostics mentioned above
 - Adding more detailed SHAP dependence plots and individual prediction explanations
 - Final integration of the best model into the interactive Tableau dashboard
 
