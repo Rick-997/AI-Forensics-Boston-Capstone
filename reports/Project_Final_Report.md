@@ -88,24 +88,30 @@ All cleaning decisions were defensive and explained in code comments. The pipeli
 Exploratory Data Analysis was performed on the cleaned dataset of 239,371 incidents to validate assumptions and uncover key patterns. The following six visualizations were selected for their thoroughness and direct relevance to the research question:
 
 **Figure 1: Shooting vs Non-Shooting Incidents (Class Imbalance)**  
+![Figure 1: Shooting vs Non-Shooting Incidents](../models/01_shooting_imbalance.png)  
 The target variable is extremely imbalanced, with only 1,679 shooting incidents (0.7%) versus 237,692 non-shooting cases. This severe imbalance justified the use of class weighting (`scale_pos_weight`) instead of accuracy-based metrics.
 
 **Figure 2: Shooting Probability by Hour of Day**  
+![Figure 2: Shooting Probability by Hour of Day](../models/02_shooting_by_hour.png)  
 A clear nighttime peak is visible between 8 PM and 6 AM, confirming the hypothesis that time of day is a strong predictor.
 
 **Figure 3: Shooting Rate – Night vs Day**  
+![Figure 3: Shooting Rate – Night vs Day](../models/03_night_vs_day.png)  
 Nighttime incidents have a shooting rate of 1.59%, approximately 5 times higher than daytime (0.31%).
 
 **Figure 4: Shooting Probability by Police District**  
+![Figure 4: Shooting Probability by Police District](../models/04_district_rates.png)  
 Significant variation exists across districts. B3 (1.67%), B2 (1.25%), and C11 (1.12%) show the highest rates, while A1, External, and Outside of show near-zero rates.
 
 **Figure 5: Shooting Probability Heatmap – Hour of Day × District**  
+![Figure 5: Shooting Probability Heatmap](../models/05_hour_district_heatmap.png)  
 The combination of nighttime hours and high-risk districts (B2, B3, C11) produces the highest concentrations of shootings.
 
 **Figure 6: Correlation Matrix of Key Features**  
+![Figure 6: Correlation Matrix](../models/06_correlation_matrix.png)  
 Poverty rate and `is_night` show the strongest positive correlations with the target variable `SHOOTING`, while `is_weekend` and most individual district dummies show weaker associations.
 
-These visualizations were generated programmatically in `02_eda.py` and are fully reproducible. All figures include clear legends and are saved in the `models/` folder.
+These visualizations were generated programmatically in `02_eda.py` and are fully reproducible. All figures are saved in the `models/` folder.
 
 ## Models
 
@@ -137,32 +143,31 @@ XGBoost was ultimately selected as the best-performing algorithm. It offered the
 The final model is a **leakage-mitigated XGBoost classifier** trained on the full feature set excluding the `is_violent` proxy.
 
 **Hyperparameter Tuning**  
-Hyperparameters were optimized using `RandomizedSearchCV` (20 iterations, 3-fold stratified cross-validation) with PR-AUC as the scoring metric (Notebook 06). The best parameters were:
-- `n_estimators=200`
-- `max_depth=4`
-- `learning_rate=0.05`
-- `subsample=0.8`
-- `colsample_bytree=0.8`
-- `scale_pos_weight=141.59`
+Hyperparameters were optimized using `RandomizedSearchCV` (20 iterations, 3-fold stratified cross-validation) with PR-AUC as the scoring metric (Notebook 06). The best parameters were:  
+`n_estimators=200`, `max_depth=4`, `learning_rate=0.05`, `subsample=0.8`, `colsample_bytree=0.8`, `scale_pos_weight=141.59`.
 
 **Model Comparison**  
 Three algorithms were evaluated on the test set:
 
 **Figure 7: Model Comparison – Precision-Recall AUC**  
+![Figure 7: Model Comparison](../models/model_comparison_pr_auc.png)  
 XGBoost achieved the highest PR-AUC (0.0391), followed closely by LightGBM and Random Forest.
 
 **Leakage Test (Notebook 08)**  
 To address professor feedback on data leakage, the model was retrained without the `is_violent` feature.
 
 **Figure 8: Leakage Test – Impact of Removing `is_violent`**  
+![Figure 8: Leakage Test](../models/leakage_test_comparison.png)  
 PR-AUC dropped from 0.8377 (with leakage) to 0.0378 (without), confirming `is_violent` was a near-perfect future-information proxy. The final model therefore uses only dispatch-time information.
 
 **SHAP Interpretability**  
 **Figure 9: SHAP Feature Importance – Final Model (No Leakage)**  
+![Figure 9: SHAP Feature Importance](../models/shap_summary_final_model.png)  
 The top drivers are poverty rate, nighttime occurrence, and hour of day. Only three districts (A15, A7, B2) show meaningful impact, reflecting real geographic concentration of risk.
 
 **Post-Hoc Exploration**  
 **Figure 10: SHAP Dependence Plot – Poverty Rate × Night**  
+![Figure 10: SHAP Dependence Plot](../models/shap_dependence_poverty_night.png)  
 Higher poverty rates have a dramatically stronger effect on shooting probability at night, providing actionable insight for triage prioritization.
 
 The final model is saved as `xgboost_shooting_model_final.json`, and all plots are available in the `models/` folder.
