@@ -154,25 +154,28 @@ print("✅ Final model saved as xgboost_shooting_model_final.json")
 # ================== FINAL PREDICTIONS FOR TABLEAU ==================
 print("\n=== Generating final predictions + SHAP for Tableau ===")
 
+# Start with the FULL original dataframe (keeps Incident Number, Lat, Long, District, SHOOTING, etc.)
+dff = df.copy()
+
+# Add the new model outputs
 feature_cols_final = ['hour', 'is_night', 'is_weekend', 'poverty_rate'] + \
                      [col for col in X.columns if col.startswith('district_')]
 
 X_final = X[feature_cols_final].copy()
 
-dff = X_final.copy()
 dff['predicted_prob'] = final_model.predict_proba(X_final)[:, 1]
 dff['predicted'] = (dff['predicted_prob'] >= 0.5).astype(int)
 
-# SHAP values
+# Add SHAP values
 explainer = shap.TreeExplainer(final_model)
 shap_values = explainer.shap_values(X_final)
 
 for i, col in enumerate(feature_cols_final):
     dff[f'shap_{col}'] = shap_values[:, i]
 
-print(f"✅ Final predictions added — {len(dff):,} rows")
+print(f"✅ Final predictions + SHAP added — {len(dff):,} rows")
 
-# Save for Tableau
+# ================== SAVE FOR TABLEAU ==================
 TABLEAU_FOLDER = REPO_ROOT / "visualizations" / "tableau"
 TABLEAU_FOLDER.mkdir(parents=True, exist_ok=True)
 output_file = TABLEAU_FOLDER / "tableau_ready.csv"
@@ -181,6 +184,7 @@ dff.to_csv(output_file, index=False)
 print(f"\n🎉 SUCCESS! Updated Tableau file created:")
 print(f"   {output_file}")
 print(f"   Rows: {len(dff):,} | Columns: {len(dff.columns)}")
+print("   (Now includes Incident Number, Lat, Long, District, etc.)")
 
 # ================== 3 PLOTS FOR FINAL REPORT ==================
 PLOTS_DIR = REPO_ROOT / "models"
