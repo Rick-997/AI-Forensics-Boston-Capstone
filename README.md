@@ -53,6 +53,7 @@ AI-Forensics-Boston-Capstone/
 │   ├── 05_tableau_data_prep.py
 │   ├── 06_hyperparameter_tuning_and_evaluation.py
 │   ├── 07_final_model_leakage_test_and_fairness_evaluation.py
+│   ├── 08_model_comparison_leakage_mitigation_fairness.py
 │   ├── data_utils.py
 │   ├── feature_engineering.py
 │   └── init.py
@@ -65,18 +66,23 @@ AI-Forensics-Boston-Capstone/
 └── requirements.txt
 ```
 
+
 ## How to Run the Full Pipeline
-
-**Recommended (easiest way):**
 ```bash
-python run_all.py
-```
-This single command runs all 7 scripts in the correct order.
+# 1. Clone the repo
+git clone https://github.com/Rick-997/AI-Forensics-Boston-Capstone.git
+cd AI-Forensics-Boston-Capstone
 
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Run everything with one command 
+python src/run_all.py        			# ← This single command runs all 8 scripts in the correct order.
+```
 
 ## Team & Status
 
-Solo project (Ricardo Orellana)
-Complete: Data wrangling, EDA, modeling, SHAP explainability, leakage/fairness tests, and interactive Tableau dashboard
+Team Sigma (Ricardo Orellana)
+Complete end-to-end pipeline: (Data Wrangling → EDA → Modeling → Hyperparameter Tuning → Leakage & Fairness Testing → Tableau)
 
-Last updated: April 2026
+Last updated: May 2026

@@ -24,7 +24,8 @@ scripts = [
     "04_model_evaluation_and_shap.py",
     "05_tableau_data_prep.py",
     "06_hyperparameter_tuning_and_evaluation.py",
-    "07_final_model_leakage_test_and_fairness_evaluation.py"
+    "07_final_model_leakage_test_and_fairness_evaluation.py",
+    "08_model_comparison_leakage_mitigation_fairness.py",
 ]
 
 success = True
@@ -56,7 +57,7 @@ if success:
     print("="*70)
     print("🎉 CONGRATULATIONS! FULL PIPELINE COMPLETED SUCCESSFULLY!")
     print("="*70)
-    print("✅ All 7 scripts executed without errors")
+    print("✅ All 8 scripts executed without errors")
     print("\n📁 The project is now fully up to date!")
     print("You can now open Tableau and connect to:")
     print("   visualizations/tableau/tableau_ready.csv")
