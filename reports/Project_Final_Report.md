@@ -110,11 +110,13 @@ Significant variation exists across districts. B3 (1.67%), B2 (1.25%), and C11 (
 **Figure 5: Shooting Probability Heatmap – Hour of Day × District**  
 ![Figure 5: Shooting Probability Heatmap](../visualizations/05_hour_district_heatmap.png)  
 **Note on “Unknown” District (14.3%)**: This small category represents incidents where the police district was not recorded (often external or out-of-jurisdiction calls). Although the shooting rate appears high, it is based on very few cases and does not affect the overall model conclusions.
+
 The combination of nighttime hours and high-risk districts (B2, B3, C11) produces the highest concentrations of shootings.
 
 **Figure 6: Correlation Matrix of Key Features**  
 ![Figure 6: Correlation Matrix](../visualizations/06_correlation_matrix.png) 
-**Note on is_violent**: This feature was intentionally excluded from the final model and correlation matrix to prevent data leakage (it acts as a near-perfect proxy for the target). It was only used in earlier exploratory analysis. 
+**Note on is_violent**: This feature was intentionally excluded from the final model and correlation matrix to prevent data leakage (it acts as a near-perfect proxy for the target). It was only used in earlier exploratory analysis.
+ 
 Poverty rate and `is_night` show the strongest positive correlations with the target variable `SHOOTING`, while `is_weekend` and most individual district dummies show weaker associations.
 
 These visualizations were generated programmatically in `02_eda.py` and are fully reproducible. All figures are saved in the `visualizations/` folder.
