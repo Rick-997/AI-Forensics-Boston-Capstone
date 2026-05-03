@@ -88,30 +88,30 @@ All cleaning decisions were defensive and explained in code comments. The pipeli
 Exploratory Data Analysis was performed on the cleaned dataset of 239,371 incidents to validate assumptions and uncover key patterns. The following six visualizations were selected for their thoroughness and direct relevance to the research question:
 
 **Figure 1: Shooting vs Non-Shooting Incidents (Class Imbalance)**  
-![Figure 1: Shooting vs Non-Shooting Incidents](../models/01_shooting_imbalance.png)  
+![Figure 1: Shooting vs Non-Shooting Incidents](../visualizations/01_shooting_imbalance.png)  
 The target variable is extremely imbalanced, with only 1,679 shooting incidents (0.7%) versus 237,692 non-shooting cases. This severe imbalance justified the use of class weighting (`scale_pos_weight`) instead of accuracy-based metrics.
 
 **Figure 2: Shooting Probability by Hour of Day**  
-![Figure 2: Shooting Probability by Hour of Day](../models/02_shooting_by_hour.png)  
+![Figure 2: Shooting Probability by Hour of Day](../visualizations/02_shooting_by_hour.png)  
 A clear nighttime peak is visible between 8 PM and 6 AM, confirming the hypothesis that time of day is a strong predictor.
 
 **Figure 3: Shooting Rate – Night vs Day**  
-![Figure 3: Shooting Rate – Night vs Day](../models/03_night_vs_day.png)  
+![Figure 3: Shooting Rate – Night vs Day](../visualizations/03_night_vs_day.png)  
 Nighttime incidents have a shooting rate of 1.59%, approximately 5 times higher than daytime (0.31%).
 
 **Figure 4: Shooting Probability by Police District**  
-![Figure 4: Shooting Probability by Police District](../models/04_district_rates.png)  
+![Figure 4: Shooting Probability by Police District](../visualizations/04_district_rates.png)  
 Significant variation exists across districts. B3 (1.67%), B2 (1.25%), and C11 (1.12%) show the highest rates, while A1, External, and Outside of show near-zero rates.
 
 **Figure 5: Shooting Probability Heatmap – Hour of Day × District**  
-![Figure 5: Shooting Probability Heatmap](../models/05_hour_district_heatmap.png)  
+![Figure 5: Shooting Probability Heatmap](../visualizations/05_hour_district_heatmap.png)  
 The combination of nighttime hours and high-risk districts (B2, B3, C11) produces the highest concentrations of shootings.
 
 **Figure 6: Correlation Matrix of Key Features**  
-![Figure 6: Correlation Matrix](../models/06_correlation_matrix.png)  
+![Figure 6: Correlation Matrix](../visualizations/06_correlation_matrix.png)  
 Poverty rate and `is_night` show the strongest positive correlations with the target variable `SHOOTING`, while `is_weekend` and most individual district dummies show weaker associations.
 
-These visualizations were generated programmatically in `02_eda.py` and are fully reproducible. All figures are saved in the `models/` folder.
+These visualizations were generated programmatically in `02_eda.py` and are fully reproducible. All figures are saved in the `visualizations/` folder.
 
 ## Models
 
