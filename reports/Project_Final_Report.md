@@ -1,5 +1,4 @@
-# AI Forensic Triage Tool: Predicting Shooting Incidents in Boston  
-**to Prioritize Crime Lab Resources**
+# AI Forensic Triage Tool: Predicting Shooting Incidents in Boston to Prioritize Crime Lab Resources
 
 **Capstone Project — DSE 6311**  
 **Author:** Ricardo Orellana  
