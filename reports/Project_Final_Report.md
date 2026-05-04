@@ -17,7 +17,13 @@ This triage tool enables forensic teams to prioritize evidence processing for th
 
 **Keywords:** predictive modeling, forensic triage, XGBoost, SHAP explainability, imbalanced classification, Boston crime data, public safety
 
-**Interactive Tableau Public Dashboard**:  
+An interactive **Tableau Public dashboard** was developed as the primary stakeholder deliverable. It features:
+- A Boston-wide map showing predicted shooting risk by incident location (color-coded by probability)
+- A dynamic SHAP Feature Importance bar chart
+- A "Top Risk Groups" table displaying the highest-probability incidents with incident number, district, time of day, and predicted probability
+- Filters for Hour of Day and Night vs Day to allow real-time exploration
+
+The dashboard is available here:  
 [AI Forensic Triage Tool – Boston Shooting Risk Predictor](https://public.tableau.com/app/profile/ricardo.orellana8607/viz/AIForensicTriageTool-BostonShootingRiskPredictor/AIForensicTriageToolBostonShootingRiskMap)
 
 ## Introduction
@@ -203,6 +209,15 @@ The triage tool is ready for operational piloting. Recommended next steps includ
 - Conduct a prospective validation study using new incidents from 2026 onward to confirm real-world performance.
 - Explore integration of additional non-leaking features (e.g., more granular weather or event data) in future iterations.
 - Expand fairness monitoring to additional protected attributes (race/ethnicity of reported victim/offender when available) and implement ongoing bias audits.
+
+An interactive **Tableau Public dashboard** was developed as the primary stakeholder deliverable. It features:
+- A Boston-wide map showing predicted shooting risk by incident location (color-coded by probability)
+- A dynamic SHAP Feature Importance bar chart
+- A "Top Risk Groups" table displaying the highest-probability incidents with incident number, district, time of day, and predicted probability
+- Filters for Hour of Day and Night vs Day to allow real-time exploration
+
+The dashboard is available here:  
+[AI Forensic Triage Tool – Boston Shooting Risk Predictor](https://public.tableau.com/app/profile/ricardo.orellana8607/viz/AIForensicTriageTool-BostonShootingRiskPredictor/AIForensicTriageToolBostonShootingRiskMap)
 
 ### Caveats and Concerns
 
