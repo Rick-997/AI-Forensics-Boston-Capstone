@@ -80,6 +80,28 @@ pip install -r requirements.txt
 python src/run_all.py        			# ← This single command runs all 8 scripts in the correct order.
 ```
 
+## Testing & Reproducibility
+
+The complete end-to-end pipeline can be executed with a single command:
+
+```bash
+python src/run_all.py
+```
+This script runs all eight modules in the correct order:
+
+Data wrangling → EDA → Feature engineering → Modeling → Hyperparameter tuning → Final evaluation → Leakage & fairness checks → Tableau data preparation
+
+Key features that ensure full reproducibility:
+
+- All code is modular and stored as clean .py files in the src/ folder
+- Custom functions are centralized in src/data_utils.py and src/feature_engineering.py
+- Dependencies are pinned in requirements.txt
+- The pipeline has been tested on a clean environment and consistently produces the same outputs (models/, visualizations/, and tableau_ready.csv)
+
+The full final report is available here:
+reports/Project_Final_Report.md
+
+
 ## Team & Status
 
 Team Sigma (Ricardo Orellana)
