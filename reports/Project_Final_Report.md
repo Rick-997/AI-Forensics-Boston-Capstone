@@ -167,7 +167,7 @@ Three algorithms were evaluated on the test set:
 XGBoost achieved the highest PR-AUC (0.0391), followed closely by LightGBM and Random Forest.
 
 **Leakage Test (Notebook 08)**  
-To address professor feedback on data leakage, the model was retrained without the `is_violent` feature.
+To address the feedback given on data leakage, the model was retrained without the `is_violent` feature.
 
 **Figure 8: Leakage Test – Impact of Removing `is_violent`**  
 ![Figure 8: Leakage Test](../models/leakage_test_comparison.png)  
