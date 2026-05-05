@@ -159,6 +159,20 @@ The final model is a **leakage-mitigated XGBoost classifier** trained on the ful
 Hyperparameters were optimized using `RandomizedSearchCV` (20 iterations, 3-fold stratified cross-validation) with PR-AUC as the scoring metric (Notebook 06). The best parameters were:  
 `n_estimators=200`, `max_depth=4`, `learning_rate=0.05`, `subsample=0.8`, `colsample_bytree=0.8`, `scale_pos_weight=141.59`.
 
+**Full Hyperparameter Search Space and Justification**
+
+To optimize the XGBoost model, I employed RandomizedSearchCV with the following full search space:
+
+- n_estimators: [100, 200, 300, 400]
+- max_depth: [3, 4, 5, 6, 7, 8]
+- learning_rate: [0.01, 0.05, 0.1, 0.2]
+- subsample: [0.6, 0.8, 1.0]
+- colsample_bytree: [0.6, 0.8, 1.0]
+
+I limited the search to n_iter=20 and used 3-fold cross-validation due to computational constraints and time limitations while still allowing sufficient exploration of the hyperparameter space.
+
+Although the performance improvement over the baseline model was modest, XGBoost was selected as the final model because it achieved the highest Precision-Recall AUC on the test set, showed greater stability across cross-validation folds, and provided superior interpretability through SHAP analysis compared to Random Forest and LightGBM. These factors made it the most suitable choice for the forensic triage application.
+
 **Model Comparison**  
 Three algorithms were evaluated on the test set:
 
