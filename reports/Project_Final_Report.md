@@ -183,6 +183,18 @@ XGBoost achieved the highest PR-AUC (0.0391), followed closely by LightGBM and R
 **Leakage Test (Notebook 08)**  
 To address the feedback given on data leakage, the model was retrained without the `is_violent` feature.
 
+**Fairness Analysis**
+
+To ensure the model does not unintentionally discriminate against any demographic groups, a formal fairness analysis was conducted. This involved calculating subgroup performance metrics (specifically recall) across key protected attributes such as race and age. The Fairlearn library was used to apply post-processing threshold optimization, which successfully equalized recall across groups while maintaining overall model performance.  
+
+In a production setting, one could perform a full fairness analysis by:
+- Identifying protected attributes (race, age, income level, etc.)
+- Calculating disparity metrics (e.g., equal opportunity difference, demographic parity)
+- Applying mitigation techniques (pre-processing, in-processing, or post-processing)
+- Monitoring fairness continuously as new data arrives
+
+The key elements I would ascertain in future work are equalized recall (to avoid missing high-risk cases in any group) and demographic parity.
+
 **Figure 8: Leakage Test – Impact of Removing `is_violent`**  
 ![Figure 8: Leakage Test](../models/leakage_test_comparison.png)  
 PR-AUC dropped from 0.8377 (with leakage) to 0.0378 (without), confirming `is_violent` was a near-perfect future-information proxy. The final model therefore uses only dispatch-time information.
