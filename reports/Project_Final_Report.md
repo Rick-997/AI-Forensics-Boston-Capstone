@@ -171,7 +171,7 @@ To optimize the XGBoost model, I employed RandomizedSearchCV with the following 
 
 I limited the search to n_iter=20 and used 3-fold cross-validation due to computational constraints and time limitations while still allowing sufficient exploration of the hyperparameter space.
 
-Although the performance improvement over the baseline model was modest, XGBoost was selected as the final model because it achieved the highest Precision-Recall AUC on the test set, showed greater stability across cross-validation folds, and provided superior interpretability through SHAP analysis compared to Random Forest and LightGBM. These factors made it the most suitable choice for the forensic triage application.
+Although the performance improvement over the baseline model was modest after hyperparameter tuning, XGBoost was selected as the final model because it achieved the highest Precision-Recall AUC on the test set, showed greater stability across cross-validation folds, and provided superior interpretability through SHAP analysis compared to Random Forest and LightGBM. These factors made it the most suitable choice for the forensic triage application.
 
 **Model Comparison**  
 Three algorithms were evaluated on the test set:
